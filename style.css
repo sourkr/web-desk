@@ -1,0 +1,107 @@
+body {
+    display: flex;
+    background: url(wallpaper.jpg) no-repeat center;
+    background-size: cover;
+    height: 100dvh;
+
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    user-select: none;
+}
+
+desktop {
+    flex: 1;
+}
+
+.frame {
+    display: block;
+    position: absolute;
+
+    background: hsl(0 0 100 / .5);
+    backdrop-filter: blur(5px);
+    border-radius: 5px;
+}
+
+.frame .titlebar {
+    display: flex;
+    padding: 5px;
+    align-items: center;
+    font-size: 0.9rem;
+    /*border-bottom: 1px solid white;*/
+    border-color: hsl(0 0 100 / .5)
+}
+
+.frame .titlebar .title {
+    flex: 1;
+    text-align: center;
+}
+
+.frame .titlebar .icons {
+    display: flex;
+    gap: 10px;
+}
+
+.frame .titlebar .icons span {
+    font-size: 1rem;
+}
+
+.window {
+    display: flex;
+    overflow: hidden;
+    height: 100%;
+    /*margin-top: 3px;*/
+}
+
+panel {
+    display: flex;
+    background: hsl(0 0 100 / .5);
+    padding: 2px;
+    transition: .5s;
+    backdrop-filter: blur(5px);
+}
+
+panel:hover {
+    background: hsl(0 0 100 / .6)
+}
+
+#start {
+    padding: 3px 10px;
+    border-radius: 5px;
+    transition: .5s;
+    anchor-name: --start;
+}
+
+#start:hover {
+    background: hsl(0 0 100 / .3);
+}
+
+start-menu {
+    display: none;
+    position: absolute;
+
+    position-anchor: --start;
+    background: hsl(0 0 100 / .5);
+    bottom: calc(anchor(top) + 5px);
+    left: 3px;
+
+    backdrop-filter: blur(5px);
+    /*padding: 5px 7px;*/
+    border-radius: 5px;
+}
+
+start-menu:focus {
+    display: block;
+}
+
+start-menu div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: .5s;
+    padding: 5px 7px;
+}
+
+start-menu div:hover {
+    background: hsl(0 0 100 / .3)
+}

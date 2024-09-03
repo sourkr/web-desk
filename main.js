@@ -3,8 +3,6 @@ const startBtn = document.querySelector('#start')
 const startMenu = document.querySelector('start-menu')
 
 
-
-
 startBtn.onclick = () => {
     if(startMenu.style.display == 'block')
         startMenu.style.display = 'none'

@@ -29,6 +29,7 @@ body {
     margin: 0;
     user-select: none;
     overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 desktop {
@@ -38,7 +39,6 @@ desktop {
 .frame {
     display: flex;
     position: absolute;
-    
     background: hsla(0deg, 0%, 100%, .5);
     backdrop-filter: blur(5px);
     border-radius: 5px 5px 5px 5px;

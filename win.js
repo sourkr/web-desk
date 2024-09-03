@@ -49,7 +49,7 @@ class Window {
             console.log(pos.x, right, pos.x > right - 10,pos.x < right)
             
             if(pos.y > rect.bottom - 5 && pos.y < rect.bottom) return 1
-            if(pos.x > right - 10 && pos.x < right) return 2
+            if(pos.x > right - 100 && pos.x < right) return 2
             
             return 0
         }

@@ -54,6 +54,7 @@ function startBrowser(app) {
 
     iframe.src = 'https://www.google.com/webhp?igu=1'
     iframe.style.cssText = `
+        flex: 1;
         border: none;
     `
     
@@ -77,7 +78,7 @@ function startBrowser(app) {
     }
     
     root.append(iframe, overlay)
-    // win.append(iframe)
+    win.append(iframe)
 
     console.log(win)
 }

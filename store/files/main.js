@@ -14,43 +14,98 @@ root.style.cssText = `
     align-items: center;
 `
 
-list('/', root, win)
+update('/', root, win)
 
 win.append(root)
 
-function update() {
+function update(path) {
     const list = fs.list(path)
-    
-    if (list.length == 0) {
-        root.innerText = 'No Files'
-        return
-    }
-    
     const size = 80
-    const width = win.width - 10
-    const cols = Math.floor(width / size)
-    const coltemp = `repeat(${cols}, ${size}px)`
+    const count = Math.floor((win.width - 10) / size)
     
+    root.innerHTML = ''
     root.style.display = 'grid'
-    root.style.gridTemplateColumns = coltemp
+    root.style.gridTemplateColumns = `repeat(${count},${size}px)`
     root.style.alignItems = 'start'
     root.style.justifyContent = 'start'
+    root.style.gridTemplateRows = 'fit-content(100%)'
+    // root.style.gap = '10px'
     
+    listDir(list, path)
+    listFile(list, path)
+}
+
+function listDir(list, path) {
     list.forEach(filename => {
+        const fstat = fs.fstat(Path.join(path, filename))
+        if(fstat.isFile()) return
+        
         const doc = document.createElement('div')
         const icon = new Image(40, 40)
         const name = document.createElement('span')
     
         doc.style.cssText = `
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+            overflow: hidden;
+        `
     
-        icon.src = 'file.png'
+        icon.src = getIcon('dir.png')
+    
         name.innerText = filename
+        name.style.cssText = `
+            text-align: center;
+            word-wrap: break-word;
+        `
+    
+        doc.onclick = () => {
+            update(Path.join(path, filename))
+        }
     
         doc.append(icon, name)
         root.append(doc)
     })
+}
+
+function listFile(list, path) {
+    list.forEach(filename => {
+        const fstat = fs.fstat(Path.join(path, filename))
+        if (!fstat.isFile()) return
+
+        const doc = document.createElement('div')
+        const icon = new Image(40, 40)
+        const name = document.createElement('span')
+
+        doc.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+            overflow: hidden;
+        `
+
+        icon.src = getIcon('file.png')
+
+        name.innerText = filename
+        name.style.cssText = `
+            text-align: center;
+            width: 80px;
+            word-wrap: break-word;
+        `
+
+        doc.onclick = () => {
+            eval(fs.read(Path.join(path, filename)))
+        }
+
+        doc.append(icon, name)
+        root.append(doc)
+    })
+}
+
+function getIcon(name) {
+    return `/store/files/icon/${name}`
 }

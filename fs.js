@@ -54,6 +54,10 @@ class FileSystem {
         this.#save()
     }
     
+    fstat(path) {
+        return new FStat(this.#file(path))
+    }
+    
     read(path) {
         return this.#file(path).data
     }
@@ -82,6 +86,18 @@ class FileSystem {
     }
 }
 
+class FStat {
+    #file
+    
+    constructor(file) {
+        this.#file = file
+    }
+    
+    isFile() {
+        return this.#file.type == 'file'
+    }
+}
+
 class Path {
     static segments(path) {
         return path.split('/').filter(Boolean)
@@ -95,6 +111,10 @@ class Path {
     
     static filename(path) {
         return this.segments(path).at(-1)
+    }
+    
+    static join(a, b) {
+        return '/' + [...this.segments(a), ...this.segments(b)].join('/')
     }
 }
 

@@ -25,7 +25,7 @@ class FileSystem {
         return Object.keys(this.#file(path).files)
     }
     
-    createFile(path) {
+    #createFile(path) {
         const parent = this.#file(Path.parent(path))
         
         parent.files[Path.filename(path)] = {
@@ -48,6 +48,8 @@ class FileSystem {
     }
     
     write(path, data) {
+        if(!this.exist(path)) this.#createFile(path)
+        
         this.#file(path).data = data
         this.#save()
     }

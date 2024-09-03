@@ -17,11 +17,9 @@
             const storejs = await (await fetch('./store.js')).text()
             const storejson = await (await fetch('./store.json')).text()
             
-            fs.createFile('store.js')
             fs.write('store.js', storejs)
             
             fs.mkdir('app')
-            fs.createFile('app/store.json')
             fs.write('app/store.json', storejson)
         }
         

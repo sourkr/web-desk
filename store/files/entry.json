@@ -1,0 +1,6 @@
+{
+    "type": "app-entry",
+    "icon": "/store/files/icon.png",
+    "name": "File Manager",
+    "file": "File Manager.js"
+}

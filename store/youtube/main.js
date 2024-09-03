@@ -1,6 +1,6 @@
 const win = new Window()
 
-win.icon.src = 'youtube.png'
+win.icon.src = 'store/youtube/icon.png'
 win.title.innerText = 'Youtube'
 
 const iframe = document.createElement('iframe')

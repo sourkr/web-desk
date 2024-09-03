@@ -7,9 +7,7 @@ async function main() {
     const applist = await (await fetch('store/apps.json')).json()
     const root = document.createElement('div')
     
-    root.style.cssText = `
-        width: 100%;
-    `
+    root.style.cssText = `width: 100%;`
     
     applist.forEach(async appid => {
         const appdata = await (await fetch(`store/${appid}/entry.json`)).json()
@@ -26,14 +24,11 @@ async function main() {
         `
         
         icon.src = appdata.icon
-        icon.style.cssText = `
-            padding: 5px;
-        `
+        icon.style.cssText = `padding: 5px;`
         
         name.innerText = appdata.name
-        name.style.cssText = `
-            flex: 1;
-        `
+        name.style.cssText = `flex: 1;`
+        
         install.innerText = 'Install'
         
         install.onclick = async () => {

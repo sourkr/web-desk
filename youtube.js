@@ -1,4 +1,4 @@
-const win = new Window(600, 400)
+const win = new Window()
 
 win.icon.src = 'youtube.png'
 win.title.innerText = 'Youtube'

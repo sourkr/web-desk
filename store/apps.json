@@ -2,6 +2,6 @@
     {
         "icon": "youtube.png",
         "name": "Youtube",
-        "file": "youtube.js"
+        "file": "Youtube.js"
     }
 ]

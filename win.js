@@ -1,5 +1,12 @@
+const def = {
+    width: 400,
+    height: innerHeight / 2
+}
+
+if(innerWidth < def.width) def.width = 300
+
 class Window {
-    constructor(width = 400, height = 300) {
+    constructor(width = def.width, height = 300) {
         this.frame = document.createElement('div')
         
         this.frame.classList.add('frame')

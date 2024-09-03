@@ -4,33 +4,36 @@ let moving = null
 class Observer {
     constructor(ele) {
         this.ele = ele
-
+        
         this.handleTouch()
         listners.push(this)
     }
 
     handleTouch() {
         let moving = null
-
+        let res = 0
+        
         this.ele.addEventListener('touchstart', ev => {
-            moving = new Vec2(
-                ev.touches[0].clientX,
-                ev.touches[0].clientY
-            )
-        })
-
+            const touch = ev.touches[0]
+            const pos = new Vec2(touch.clientX, touch.clientY)
+            console.warn(touch, touch.screenX == touch.clientX)
+            if((res = this.onstart(pos)) == 0) return
+            
+            moving = pos
+        }, true)
+        
         this.ele.addEventListener('touchmove', ev => {
             if(moving == null) return
-
+            
             const touch = new Vec2(
                 ev.touches[0].clientX,
                 ev.touches[0].clientY
             )
-
+            
             const d = touch.sub(moving)
 
             moving = touch
-            this.onmove(d)
+            this.onmove(d, res)
         })
 
         this.ele.addEventListener('touchend', () => moving = null)
@@ -76,3 +79,7 @@ window.addEventListener('mousemove', ev => {
 })
 
 window.addEventListener('mouseup', () => moving = null)
+
+// window.addEventListener('touchstart', ev => {
+//     console.log(ev.target)
+// })

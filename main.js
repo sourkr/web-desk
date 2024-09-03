@@ -46,17 +46,38 @@ function startBrowser(app) {
     
     win.icon.src = app.icon
     win.title.innerText = app.name
-
+    
+    const root = document.createElement('div')
+    // const searchBar = document.createElement('input')
     const iframe = document.createElement('iframe')
+    const overlay = document.createElement('iframe')
 
-    //iframe.src = 'https://www.google.com/webhp?igu=1'
+    iframe.src = 'https://www.google.com/webhp?igu=1'
     iframe.style.cssText = `
-        width: 100%;
-        height: 100%;
         border: none;
     `
     
-    win.append(iframe)
+    root.style.cssText = `
+        position: relative;
+        width: 100%;
+        height: 100%;
+    `
+    
+    overlay.style.cssText = `
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: hsl(0 50 100 / .5);
+    `
+    
+    overlay.onclick = ev => {
+        iframe.dispatchEvent(ev)
+    }
+    
+    root.append(iframe, overlay)
+    // win.append(iframe)
 
     console.log(win)
 }

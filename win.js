@@ -39,6 +39,26 @@ class Window {
             this.y += dpos.y
             this.x += dpos.x
         }
+        
+        const resizer = new Observer(this.frame)
+        
+        resizer.onstart = pos => {
+            const rect = this.frame.getBoundingClientRect()
+            const right = rect.right + 10
+            console.log(rect)
+            console.log(pos.x, right, pos.x > right - 10,pos.x < right)
+            
+            if(pos.y > rect.bottom - 5 && pos.y < rect.bottom) return 1
+            if(pos.x > right - 10 && pos.x < right) return 2
+            
+            return 0
+        }
+        
+        resizer.onmove = (pos, type) => {
+            console.log(type)
+            if(type == 1) this.height += pos.y
+            if(type == 2) this.width += pos.x
+        }
     }
 
     append(child) {
@@ -76,4 +96,12 @@ class Window {
     get x() {
         return parseFloat(this.frame.style.left)
     }
+    
+    // set bottom(px) {
+    //     this.frame.style.width = px + 'px'
+    // }
+    
+    // get bottom() {
+    //     return parseFloat(this.frame.style.width)
+    // }
 }

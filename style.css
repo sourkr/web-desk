@@ -2,12 +2,13 @@ body {
     display: flex;
     background: url(wallpaper.jpg) no-repeat center;
     background-size: cover;
-    height: 100dvh;
-
+    height: 100vh;
+    width: 100vw;
     flex-direction: column;
     padding: 0;
     margin: 0;
     user-select: none;
+    overflow: hidden;
 }
 
 desktop {
@@ -15,16 +16,24 @@ desktop {
 }
 
 .frame {
-    display: block;
+    display: flex;
     position: absolute;
-
+    
     background: hsl(0 0 100 / .5);
     backdrop-filter: blur(5px);
-    border-radius: 5px;
+    border-radius: 5px 5px 5px 5px;
+    /* overflow: hidden; */
+    /* padding: 0 5px 5px 5px; */
+    flex-direction: column;
 }
+
+/* .frame:hover {
+    background: red;
+} */
 
 .frame .titlebar {
     display: flex;
+    
     padding: 5px;
     align-items: center;
     font-size: 0.9rem;
@@ -50,7 +59,10 @@ desktop {
     display: flex;
     overflow: hidden;
     height: 100%;
-    /*margin-top: 3px;*/
+    margin-top: 3px;
+    border-radius: 0 0 5px 5px;
+    /* padding: 2px; */
+    margin: 0 5px 5px 5px;
 }
 
 panel {
@@ -79,15 +91,13 @@ panel:hover {
 start-menu {
     display: none;
     position: absolute;
-
     position-anchor: --start;
     background: hsl(0 0 100 / .5);
     bottom: calc(anchor(top) + 5px);
     left: 3px;
-
     backdrop-filter: blur(5px);
-    /*padding: 5px 7px;*/
     border-radius: 5px;
+    overflow: hidden;
 }
 
 start-menu:focus {

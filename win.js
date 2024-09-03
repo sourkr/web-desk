@@ -1,5 +1,5 @@
 class Window {
-    constructor(width = 300, height = 200) {
+    constructor(width = 400, height = 300) {
         this.frame = document.createElement('div')
         
         this.frame.classList.add('frame')
@@ -58,6 +58,12 @@ class Window {
             console.log(type)
             if(type == 1) this.height += pos.y
             if(type == 2) this.width += pos.x
+        }
+        
+        this.icons.children[2].onclick = () => {
+            observer.remove()
+            resizer.remove()
+            this.frame.remove()
         }
     }
 

@@ -44,6 +44,10 @@ class Observer {
     onstart() {
         return 1
     }
+    
+    remove() {
+        listners.splice(listners.indexOf(this), 1)
+    }
 }
 
 class Vec2 {

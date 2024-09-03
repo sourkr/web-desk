@@ -115,3 +115,5 @@ function contextmenu(x, y, options) {
     
     document.body.append(contextmenu)
 }
+
+// startFiles()

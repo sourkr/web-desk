@@ -50,7 +50,7 @@ function startFiles(app) {
     win.title.innerText = app.name
 
     const root = document.createElement('div')
-
+    
     root.style.cssText = `
         position: relative;
         width: 100%;
@@ -60,8 +60,44 @@ function startFiles(app) {
         align-items: center;
     `
     
-    root.innerText = `No Files`
+    list('/', root, win)
 
-    // root.append(searchBar, iframe)
     win.append(root)
+}
+
+function list(path, root, win) {
+    const list = fs.list(path)
+    
+    if(list.length == 0) {
+        root.innerText = 'No Files'
+        return
+    }
+    
+    const size = 80
+    const width = win.width - 10
+    const cols = Math.floor(width / size)
+    const coltemp = `repeat(${cols}, ${size}px)`
+    
+    root.style.display = 'grid'
+    root.style.gridTemplateColumns = coltemp
+    root.style.alignItems = 'start'
+    root.style.justifyContent = 'start'
+    
+    list.forEach(filename => {
+        const doc = document.createElement('div')
+        const icon = new Image(40, 40)
+        const name = document.createElement('span')
+        
+        doc.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        `
+        
+        icon.src = 'file.png'
+        name.innerText = filename
+        
+        doc.append(icon, name)
+        root.append(doc)
+    })
 }

@@ -1,7 +1,3 @@
 [
-    {
-        "icon": "youtube.png",
-        "name": "Youtube",
-        "file": "Youtube.js"
-    }
+    "youtube"
 ]

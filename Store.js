@@ -4,14 +4,15 @@ win.icon.src = 'store.png'
 win.title.innerText = 'Store'
 
 async function main() {
-    const applist = await (await fetch('apps.json')).json()
+    const applist = await (await fetch('store/apps.json')).json()
     const root = document.createElement('div')
     
     root.style.cssText = `
         width: 100%;
     `
     
-    applist.forEach(appdata => {
+    applist.forEach(async appid => {
+        const appdata = await (await fetch(`store/${appid}/entry.json`)).json()
         const app = document.createElement('div')
         const icon = new Image(30, 30)
         const name = document.createElement('span')
@@ -36,9 +37,9 @@ async function main() {
         install.innerText = 'Install'
         
         install.onclick = async () => {
-            const code = await (await fetch(appdata.file)).text()
+            const code = await (await fetch(`store/${appid}/main.js`)).text()
             
-            fs.write(`/app/${noext(appdata.file)}.json`, JSON.stringify(appdata))
+            fs.write(`/apps/${appdata.name}.json`, JSON.stringify(appdata))
             fs.write(appdata.file, code)
         }
         

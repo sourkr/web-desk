@@ -1,0 +1,6 @@
+{
+    "type": "app-entry",
+    "icon": "/store/youtube/icon.png",
+    "name": "Youtube",
+    "file": "Youtube.js"
+}

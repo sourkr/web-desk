@@ -14,13 +14,13 @@
     
     <script type="module">
         async function main() {
-            const storejs = await (await fetch('./store.js')).text()
-            const storejson = await (await fetch('./store.json')).text()
+            const storejs = await (await fetch('./Store.js')).text()
+            const storejson = await (await fetch('./Store.json')).text()
             
-            fs.write('store.js', storejs)
+            fs.write('Store.js', storejs)
             
-            fs.mkdir('app')
-            fs.write('app/store.json', storejson)
+            fs.mkdir('apps')
+            fs.write('apps/Store.json', storejson)
         }
         
         main()

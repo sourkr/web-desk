@@ -52,6 +52,10 @@ class FileSystem {
         this.#save()
     }
     
+    read(path) {
+        return this.#file(path).data
+    }
+    
     #save() {
         localStorage.setItem(FS_NAME, JSON.stringify(filesys))
     }

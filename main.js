@@ -23,6 +23,21 @@ startBtn.onclick = () => {
             item.append(icon, name)
             startMenu.appendChild(item)
         })
+        
+        fs.list('app').forEach(file => {
+            const app = JSON.parse(fs.read(`/app/${file}`))
+            const icon = new Image(24, 24)
+            const name = document.createElement('span')
+            const item = document.createElement('div')
+            
+            icon.src = app.icon
+            name.innerText = app.name
+            
+            item.onclick = () => eval(fs.read(app.file))
+            
+            item.append(icon, name)
+            startMenu.appendChild(item)
+        })
     }
 }
 

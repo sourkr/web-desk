@@ -1,0 +1,6 @@
+{
+    "type": "app-entry",
+    "icon": "/store/browser/icon.webp",
+    "name": "Web Browser",
+    "file": "Web Browser.js"
+}

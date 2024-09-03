@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+</head>
+
+<body>
+    <script src="fs.js">fs.js</script>
+    
+    <script type="module">
+        async function main() {
+            const storejs = await (await fetch('./store.js')).text()
+            const storejson = await (await fetch('./store.json')).text()
+            
+            fs.createFile('store.js')
+            fs.write('store.js', storejs)
+            
+            fs.mkdir('app')
+            fs.createFile('app/store.json')
+            fs.write('app/store.json', storejson)
+        }
+        
+        main()
+    </script>
+</body>
+
+</html>

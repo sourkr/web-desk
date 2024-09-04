@@ -1,0 +1,6 @@
+{
+    "type": "app-entry",
+    "icon": "/store/editor/icon.png",
+    "name": "File Editor",
+    "file": "File Editor.js"
+}

@@ -14,7 +14,7 @@ async function main() {
         const app = document.createElement('div')
         const icon = new Image(30, 30)
         const name = document.createElement('span')
-        const install = document.createElement('button')
+        const install = new $('button')
 
         app.style.cssText = `
             display: flex;
@@ -29,16 +29,19 @@ async function main() {
         name.innerText = appdata.name
         name.style.cssText = `flex: 1;`
         
-        install.innerText = 'Install'
+        install.text = 'Install'
+        install.css({
+            background: 'hsl(215deg, 100%, 60%)'
+        })
         
-        install.onclick = async () => {
+        install.on('click', async () => {
             const code = await (await fetch(`store/${appid}/main.js`)).text()
             
             fs.write(`/apps/${appdata.name}.json`, JSON.stringify(appdata))
             fs.write(appdata.file, code)
-        }
+        })
         
-        app.append(icon, name, install)
+        app.append(icon, name, install.element)
         root.append(app)
     })
     

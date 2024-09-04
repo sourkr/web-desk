@@ -4,8 +4,10 @@ win.icon.src = '/store/browser/icon.webp'
 win.title.innerText = 'Web Browser'
 
 const root = document.createElement('div')
-const searchBar = document.createElement('input')
+const searchBar = new $('input')
 const iframe = document.createElement('iframe')
+
+searchBar.css('border', 'none')
 
 iframe.src = 'https://www.google.com/webhp?igu=1'
 iframe.style.cssText = `
@@ -26,5 +28,9 @@ searchBar.onchange = () => {
     iframe.src = url
 }
 
-root.append(searchBar, iframe)
+iframe.onload = () => {
+    searchBar.element.value = iframe.contentWindow.location
+}
+
+root.append(searchBar.element, iframe)
 win.append(root)

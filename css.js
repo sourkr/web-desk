@@ -1,0 +1,1 @@
+const flex = 'flex'

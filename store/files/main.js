@@ -3,36 +3,39 @@ const win = new Window()
 win.icon.src = 'store/files/icon.png'
 win.title.innerText = 'File Manager'
 
-const root = document.createElement('div')
+const root = new $('div')
+const bar = new $('input')
+const files = new $('div')
 
-root.style.cssText = `
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`
+root.css({
+    display: flex,
+    width: '100%',
+    'flex-direction': 'column'
+})
 
-update('/', root, win)
+update('/')
 
-win.append(root)
+root.append(bar, files)
+win.append(root.element)
 
 function update(path) {
     const list = fs.list(path)
     const size = 80
     const count = Math.floor((win.width - 10) / size)
     
-    root.innerHTML = ''
-    root.style.display = 'grid'
-    root.style.gridTemplateColumns = `repeat(${count},${size}px)`
-    root.style.alignItems = 'start'
-    root.style.justifyContent = 'start'
-    root.style.gridTemplateRows = 'fit-content(100%)'
-    // root.style.gap = '10px'
+    files.text = ''
+    files.css({
+        display: 'grid',
+        'grid-template-columns': `repeat(${count},${size}px)`,
+        // 'align-items': 'start',
+        // 'justify-content': 'start',
+        gridTemplateRows: 'fit-content(100%)'
+    })
     
     listDir(list, path)
     listFile(list, path)
+    
+    bar.element.value = path
 }
 
 function listDir(list, path) {
@@ -66,7 +69,7 @@ function listDir(list, path) {
         }
     
         doc.append(icon, name)
-        root.append(doc)
+        files.append(doc)
     })
 }
 
@@ -102,7 +105,8 @@ function listFile(list, path) {
         }
 
         doc.append(icon, name)
-        root.append(doc)
+        files.append(doc)
+
     })
 }
 

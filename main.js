@@ -1,6 +1,5 @@
 const desktop = document.querySelector('desktop')
 const startBtn = document.querySelector('#start')
-const startMenu = document.querySelector('start-menu')
 
 startBtn.onclick = () => {
     const menu = new ContextMenu()
@@ -13,59 +12,7 @@ startBtn.onclick = () => {
     })
     
     menu.showAt(6, 36, 'bottom-left')
-    
-    return
-    
-    if(startMenu.style.display == 'block')
-        startMenu.style.display = 'none'
-    else {
-        startMenu.style.display = 'block'
-        startMenu.innerHTML = ''
-        
-        applications.forEach(app => {
-            const icon = new Image(24, 24)
-            const name = document.createElement('span')
-            const item = document.createElement('div')
-        
-            icon.src = app.icon
-            name.innerText = app.name
-        
-            item.onclick = app.start.bind(app, app)
-        
-            item.append(icon, name)
-            startMenu.appendChild(item)
-        })
-        
-        fs.list('apps').forEach(file => {
-            const app = JSON.parse(fs.read(`/apps/${file}`))
-            const icon = new Image(24, 24)
-            const name = document.createElement('span')
-            const item = document.createElement('div')
-            
-            icon.src = app.icon
-            name.innerText = app.name
-            
-            item.onclick = () => eval(fs.read(app.file))
-            
-            item.append(icon, name)
-            startMenu.appendChild(item)
-        })
-    }
 }
-
-document.querySelector('start-menu').style.bottom = (startBtn.getBoundingClientRect().height + 10) + 'px'
-
-window.onclick = ev => {
-    if(startBtn.contains(ev.target)) return
-
-    if(startMenu.style.display == 'block' && !startMenu.contains(ev.target)) {
-        ev.preventDefault()
-        startMenu.style.display = 'none'
-    }
-}
-
-
-
 
 desktop.oncontextmenu = ev => {
     contextmenu(ev.pageX, ev.pageY, [
@@ -127,5 +74,3 @@ function contextmenu(x, y, options) {
     
     document.body.append(contextmenu)
 }
-
-// startFiles()

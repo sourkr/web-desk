@@ -2,8 +2,20 @@ const desktop = document.querySelector('desktop')
 const startBtn = document.querySelector('#start')
 const startMenu = document.querySelector('start-menu')
 
-
 startBtn.onclick = () => {
+    const menu = new ContextMenu()
+    
+    let group = menu.group()
+    
+    fs.list('apps').forEach(file => {
+        const app = JSON.parse(fs.read(`/apps/${file}`))
+        group.add(app.icon, app.name, () => eval(fs.read(app.file)))
+    })
+    
+    menu.showAt(6, 36, 'bottom-left')
+    
+    return
+    
     if(startMenu.style.display == 'block')
         startMenu.style.display = 'none'
     else {

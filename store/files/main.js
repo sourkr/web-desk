@@ -109,3 +109,5 @@ function listFile(list, path) {
 function getIcon(name) {
     return `/store/files/icon/${name}`
 }
+
+function gridItem(icon, name, click) {}

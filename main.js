@@ -1,11 +1,27 @@
 $('#start').on('click', () => {
+    const categories = new Map()
     const menu = new ContextMenu()
+    const group = menu.group()
     
-    let group = menu.group()
+    categories.set('All Programs', new Set())
     
     fs.list('apps').forEach(file => {
-        const app = JSON.parse(fs.read(`/apps/${file}`))
-        group.add(new ImageIcon(app.icon), app.name, () => run(app.file))
+        const entry = JSON.parse(fs.read(`/apps/${file}`))
+        
+        categories.get("All Programs").add(entry)
+        
+        entry.categories.forEach(category => {
+            if(!categories.has(category)) categories.set(category, new Set())
+            categories.get(category).add(entry)
+        })
+    })
+    
+    categories.forEach((entries, category) => {
+        const sub = group.sub(new ImageIcon(`/icons/${category}.png`), category).group()
+        
+        entries.forEach(entry => {
+            sub.add(new ImageIcon(entry.icon), entry.name, () => run(`/${entry.file}`))
+        })
     })
     
     menu.showAt(6, 36, 'bottom-left')

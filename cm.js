@@ -1,7 +1,8 @@
 const menus = new Set()
 
 class ContextMenu {
-    constructor() {
+    constructor(parent) {
+        this.parent = parent
         this.root = $('<div class="context-menu"></div>')
     }
     
@@ -19,9 +20,11 @@ class ContextMenu {
         menus.add(this)
     }
     
-    hide() {
+    hide(selfOnly) {
         this.root.remove()
         menus.delete(this)
+        
+        if(this.parent && !selfOnly) this.parent.hide()
     }
 }
 
@@ -38,11 +41,32 @@ class ContextMenuGroup {
         icon.setSize(24)
         
         item.on('click', () => {
-            click()
-            this.menu.hide()
+            if(!click()) this.menu.hide()
         })
         
         item.append(icon, title)
+        
+        return item
+    }
+    
+    sub(icon, name) {
+        const menu = new ContextMenu(this.menu)
+        
+        const item = this.add(icon, name, () => {
+            const rect = item[0].getBoundingClientRect()
+            
+            this.menu.sub?.hide?.(true)
+            menu.showAt(rect.right + 5, rect.top)
+            this.menu.sub = menu
+            
+            return true
+        })
+        
+        return menu
+    }
+    
+    remove(sub) {
+        this.susb
     }
 }
 

@@ -4,8 +4,10 @@ win.icon.src = 'store/files/icon.png'
 win.title.innerText = 'File Manager'
 
 const root = $('<div></div>')
-const bar = $('<input/>')
+const toolbar = createToolbar()
 const files = $('<div></div>')
+
+const stack = []
 
 root.css({
     display: 'flex',
@@ -13,17 +15,9 @@ root.css({
     'flex-direction': 'column'
 })
 
-
-bar.css({
-    border: 'none',
-    outline: 'none',
-    'border-radius': '5px',
-    padding: '0 5px'
-})
-
 update('/')
 
-root.append(bar, files)
+root.append(toolbar, files)
 win.append(root[0])
 
 function update(path) {
@@ -43,7 +37,8 @@ function update(path) {
     listDir(list, path)
     listFile(list, path)
     
-    bar.val(path)
+    toolbar.children('input').val(path)
+    stack.push(path)
 }
 
 function listDir(list, path) {
@@ -51,33 +46,11 @@ function listDir(list, path) {
         const fstat = fs.fstat(Path.join(path, filename))
         if(fstat.isFile()) return
         
-        const doc = document.createElement('div')
-        const icon = new Image(40, 40)
-        const name = document.createElement('span')
-    
-        doc.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding-top: 10px;
-            overflow: hidden;
-        `
-    
-        icon.src = getIcon('dir.png')
-    
-        name.innerText = filename
-        name.style.cssText = `
-            text-align: center;
-            word-wrap: break-word;
-        `
-    
-        doc.onclick = () => {
-            update(Path.join(path, filename))
-        }
-    
-        doc.append(icon, name)
-        files.append(doc)
+        const item = createItem(getIcon('dir.png'), filename)
+        
+        item.on('click', () => update(Path.join(path, filename)))
+        
+        files.append(item)
     })
 }
 
@@ -85,37 +58,17 @@ function listFile(list, path) {
     list.forEach(filename => {
         const fstat = fs.fstat(Path.join(path, filename))
         if (!fstat.isFile()) return
-
-        const doc = document.createElement('div')
-        const icon = new Image(40, 40)
-        const name = document.createElement('span')
-
-        doc.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding-top: 10px;
-            overflow: hidden;
-        `
-
-        icon.src = getIcon('file.png')
-
-        name.innerText = filename
-        name.style.cssText = `
-            text-align: center;
-            width: 80px;
-            word-wrap: break-word;
-        `
-
-        doc.onclick = () => {
+    
+        const item = createItem(getIcon('file.png'), filename)
+        
+        item.on('click', () => {
             if(filename.endsWith('.js'))
-                eval(fs.read(Path.join(path, filename)))
+                run(Path.join(path, filename))
             else
                 run('/File Editor.js', Path.join(path, filename))
-        }
+        })
         
-        doc.oncontextmenu = ev => {
+        item.on('contextmenu', ev => {
             const menu = new ContextMenu()
             
             menu.group().add(new FontIcon('file_open'), 'Open With File Editor', () => {
@@ -124,14 +77,67 @@ function listFile(list, path) {
             
             menu.showAt(ev.pageX, ev.pageY)
             ev.preventDefault()
-        }
+        })
 
-        doc.append(icon, name)
-        files.append(doc)
-
+        files.append(item)
     })
 }
 
 function getIcon(name) {
     return `/store/files/icon/${name}`
+}
+
+function createItem(icon, name) {
+    const item = $(`<div class="ripple">
+        <img src="${icon}" width="40">
+        <span>${name}</span>
+    </div>`)
+    
+    item.css({
+        display: 'flex',
+        'flex-direction': 'column',
+        gap: '10px',
+        'align-items': 'center',
+        'padding-top': '10px',
+        overflow: 'hidden'
+    })
+    
+    return item
+}
+
+function createToolbar() {
+    const toolbar = $(`<div>
+        <span id="back" class="ripple material-symbols-rounded">arrow_back_ios_new</span>
+        <input/>
+    </div>`)
+    
+    toolbar.css({
+        display: 'flex',
+        gap: '5px',
+        'align-items': 'center'
+    })
+    
+    toolbar.children('#back').css({
+        'font-size': '1rem',
+        'padding': '5px'
+    })
+    
+    toolbar.children('input').css({
+        border: 'none',
+        outline: 'none',
+        flex: 1,
+        'border-radius': '2ch',
+        'padding-inline': '5px'
+    })
+    
+    toolbar.children('#back').on('click', () => {
+        stack.pop()
+        update(stack.at(-1))
+    })
+    
+    toolbar.children('input').on('change', () => {
+        update(toolbar.children('input').val())
+    })
+    
+    return toolbar
 }

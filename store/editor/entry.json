@@ -3,6 +3,6 @@
     "icon": "/store/editor/icon.png",
     "name": "File Editor",
     "file": "File Editor.js",
-    "version": "0.0.1 Beta",
+    "version": "0.0.2 Beta",
     "categories": ["Development", "System"]
 }

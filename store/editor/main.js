@@ -3,7 +3,9 @@ const win = new Window()
 win.icon.src = '/store/editor/icon.png'
 win.title.innerText = 'File Editor'
 
-const textarea = new $('textarea')
+const textarea = $('<textarea></textarea>')
+
+let opened = null
 
 textarea.css({
     width: '100%',
@@ -14,8 +16,16 @@ textarea.css({
     resize: 'none'
 })
 
-if(fs.exist(process.argv[1])) {
-    textarea.element.value = fs.read(process.argv[1])
+if(process.argv[1] && fs.exist(process.argv[1])) {
+    opened = process.argv[1]
+    textarea.val(fs.read(process.argv[1]))
 }
 
-win.append(textarea.element)
+textarea.on('keydown', ev => {
+    if(ev.ctrlKey && ev.key == 's') {
+        ev.preventDefault()
+        if(opened) fs.write(opened, textarea.val())
+    }
+})
+
+win.append(textarea[0])

@@ -1,0 +1,8 @@
+{
+    "type": "app-entry",
+    "icon": "/store/taskman/icon.png",
+    "name": "Task Manager",
+    "file": "Task Manager.js",
+    "version": "0.0.1 Beta",
+    "categories": ["System", "Utility"]
+}

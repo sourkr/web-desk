@@ -1,3 +1,5 @@
+const windows = new Set()
+
 const def = {
     width: 400,
     height: innerHeight / 2
@@ -11,6 +13,8 @@ class Window {
         
         this.y = innerHeight / 2 - this.height / 2
         this.x = innerWidth / 2 - this.width / 2
+        
+        windows.add(this)
     }
     
     createFrame(width, height) {
@@ -51,7 +55,7 @@ class Window {
         const resizer = new Observer(this.frame)
         
         resizer.onstart = pos => {
-            const rect = this.frame.getBoundingClientRect()
+            const rect = this.frame[0].getBoundingClientRect()
             const right = rect.right + 10
         
             if (pos.y > rect.bottom - 5 && pos.y < rect.bottom) return 1
@@ -65,23 +69,20 @@ class Window {
             if (type == 2) this.width += pos.x
         }
         
-        this.icons.children[2].onclick = () => {
-            observer.remove()
-            resizer.remove()
-            this.frame.remove()
-        }
-        
-        // this.icons.children[2].onmouseenter = () => {
-        //     $(this.icons).children('#close').css('background', 'red')
-        // }
-        
-        // this.icons.children[2].onmouseleave = () => {
-        //     $(this.icons).children('#close').css('background', 'transparent')
-        // }
+        this.observer = observer
+        this.resizer = resizer
+        this.icons.children[2].onclick = () => this.close()
     }
 
     append(child) {
         this.window.append(child)
+    }
+    
+    close() {
+        this.observer.remove()
+        this.resizer.remove()
+        this.frame.remove()
+        windows.delete(this)
     }
 
     set width(px) {
@@ -109,12 +110,10 @@ class Window {
     }
 
     get y() {
-        // return this.frame[0].offsetTop
         return this.frame.offset().top
     }
 
     get x() {
-        // return this.frame[0].offsetLeft
         return this.frame.offset().left
     }
 }

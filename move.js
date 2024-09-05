@@ -13,16 +13,16 @@ class Observer {
         let moving = null
         let res = 0
         
-        this.ele.addEventListener('touchstart', ev => {
+        this.ele.on('touchstart', ev => {
             const touch = ev.touches[0]
             const pos = new Vec2(touch.clientX, touch.clientY)
             console.warn(touch, touch.screenX == touch.clientX)
             if((res = this.onstart(pos)) == 0) return
             
             moving = pos
-        }, true)
+        })
         
-        this.ele.addEventListener('touchmove', ev => {
+        this.ele.on('touchmove', ev => {
             if(moving == null) return
             
             const touch = new Vec2(
@@ -36,8 +36,8 @@ class Observer {
             this.onmove(d, res)
         })
 
-        this.ele.addEventListener('touchend', () => moving = null)
-        this.ele.addEventListener('touchcancle', () => moving = null)
+        this.ele.on('touchend', () => moving = null)
+        this.ele.on('touchcancle', () => moving = null)
     }
 
     onmove() {}
@@ -61,9 +61,10 @@ class Vec2 {
     }
 }
 
-window.addEventListener('mousedown', ev => {
+$(window).on('mousedown', ev => {
     for(let win of listners) {
-        if(ev.target === win.ele) {
+        if(ev.target === win.ele[0]) {
+            // console.log(win)
             const pos = new Vec2(ev.clientX, ev.clientY)
             const res = win.onstart(pos)
             if(res == 0) return
@@ -72,7 +73,7 @@ window.addEventListener('mousedown', ev => {
     }
 })
 
-window.addEventListener('mousemove', ev => {
+$(window).on('mousemove', ev => {
     if(!moving) return
 
     const pos = new Vec2(ev.clientX, ev.clientY)
@@ -82,7 +83,7 @@ window.addEventListener('mousemove', ev => {
     moving.pos = pos
 })
 
-window.addEventListener('mouseup', () => moving = null)
+$(window).on('mouseup', () => moving = null)
 
 // window.addEventListener('touchstart', ev => {
 //     console.log(ev.target)

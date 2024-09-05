@@ -7,16 +7,15 @@ if(innerWidth < def.width) def.width = 300
 
 class Window {
     constructor(width = def.width, height = 300) {
-        this.frame = document.createElement('div')
+        this.frame = $(`<div class="frame"></div>`)
         
-        this.frame.classList.add('frame')
         this.width = width
         this.height = height
 
-        desktop.appendChild(this.frame)
+        $('desktop').append(this.frame)
         
-        this.frame.style.top = `${innerHeight/2 - this.height/2}px`
-        this.frame.style.left = `${innerWidth/2 - this.width/2}px`
+        this.y = innerHeight/2 - this.height/2
+        this.x = innerWidth/2 - this.width/2
 
         this.titlebar = document.createElement('div')
         this.window = document.createElement('div')
@@ -40,7 +39,7 @@ class Window {
         this.titlebar.append(this.icon, this.title, this.icons)
         this.frame.append(this.titlebar, this.window)
         
-        const observer = new Observer(this.title)
+        const observer = new Observer($(this.title))
         
         observer.onmove = dpos => {
             this.y += dpos.y
@@ -52,8 +51,6 @@ class Window {
         resizer.onstart = pos => {
             const rect = this.frame.getBoundingClientRect()
             const right = rect.right + 10
-            console.log(rect)
-            console.log(pos.x, right, pos.x > right - 10,pos.x < right)
             
             if(pos.y > rect.bottom - 5 && pos.y < rect.bottom) return 1
             if(pos.x > right - 100 && pos.x < right) return 2
@@ -62,7 +59,6 @@ class Window {
         }
         
         resizer.onmove = (pos, type) => {
-            console.log(type)
             if(type == 1) this.height += pos.y
             if(type == 2) this.width += pos.x
         }
@@ -79,42 +75,36 @@ class Window {
     }
 
     set width(px) {
-        this.frame.style.width = px + 'px'
+        this.frame.css('width', px + 'px')
     }
     
     set height(px) {
-        this.frame.style.height = px + 'px'
+        this.frame.css('height', px + 'px')
     }
 
     get width() {
-        return parseFloat(this.frame.style.width)
+        return parseFloat(this.frame.css('width'))
     }
     
     get height() {
-        return parseFloat(this.frame.style.height)
+        return parseFloat(this.frame.css('height'))
     }
 
     set y(px) {
-        this.frame.style.top = px + 'px'
+        this.frame.css('top', px + 'px')
     }
 
     set x(px) {
-        this.frame.style.left = px + 'px'
+        this.frame.css('left', px + 'px')
     }
 
     get y() {
-        return parseFloat(this.frame.style.top)
+        // return this.frame[0].offsetTop
+        return this.frame.offset().top
     }
 
     get x() {
-        return parseFloat(this.frame.style.left)
+        // return this.frame[0].offsetLeft
+        return this.frame.offset().left
     }
-    
-    // set bottom(px) {
-    //     this.frame.style.width = px + 'px'
-    // }
-    
-    // get bottom() {
-    //     return parseFloat(this.frame.style.width)
-    // }
 }

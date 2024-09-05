@@ -1,76 +1,47 @@
-const desktop = document.querySelector('desktop')
-const startBtn = document.querySelector('#start')
-
-startBtn.onclick = () => {
+$('#start').on('click', () => {
     const menu = new ContextMenu()
     
     let group = menu.group()
     
     fs.list('apps').forEach(file => {
         const app = JSON.parse(fs.read(`/apps/${file}`))
-        group.add(app.icon, app.name, () => eval(fs.read(app.file)))
+        group.add(new ImageIcon(app.icon), app.name, () => run(app.file))
     })
     
     menu.showAt(6, 36, 'bottom-left')
+})
+
+
+
+function run(...argv) {
+    const code = fs.read(argv[0])
+    const process = { argv }
+    
+    // console.log(code)
+    eval(code)
 }
 
-desktop.oncontextmenu = ev => {
-    contextmenu(ev.pageX, ev.pageY, [
-        {
-            title: 'Add URL',
-            click: () => {
-                const win = new Window()
-                win.title.innerText = 'Add URL App'
-                
-                const root = document.createElement('div')
-                const url = document.createElement('input')
-                const btn = document.createElement('button')
-                
-                btn.innerText = 'Add'
-                
-                btn.onclick = () => {
-                    applications.push({
-                        start: () => {
-                            const win = new Window()
-                            
-                            // win.icon.src = app.icon
-                            // win.title.innerText = app.name
-                            
-                            const iframe = document.createElement('iframe')
-                            
-                            iframe.src = url.value
-                            iframe.style.cssText = `
-                                    flex: 1;
-                                    border: none;
-                                `
-                            win.append(iframe)
-                        }
-                    })
-                }
-                
-                root.append(url, btn)
-                win.append(root)
-            }
-        }
-    ])
+function ImageIcon(src) {
+    const image = new Image()
+    image.src = src
+    
+    image.setSize = s => {
+        image.width = s
+        image.height = s
+    }
+    
+    return image
 }
 
-function contextmenu(x, y, options) {
-    const contextmenu = document.createElement('div')
+function FontIcon(code) {
+    const span = new $('span')
     
-    contextmenu.classList.add('contextmenu')
-    contextmenu.style.left = x + 'px'
-    contextmenu.style.top = y + 'px'
+    span.class.add('material-symbols-rounded')
+    span.text = code
     
-    options.forEach(option => {
-        const item = document.createElement('div')
-        item.innerText = option.title
-        contextmenu.append(item)
-        contextmenu.onclick = () => {
-            contextmenu.remove()
-            option.click()
-        }
-    })
+    span.setSize = s => {
+        span.css('font-size', s + 'px')
+    }
     
-    document.body.append(contextmenu)
-}
+    return span
+} 

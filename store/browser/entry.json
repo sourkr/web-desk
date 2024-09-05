@@ -2,5 +2,7 @@
     "type": "app-entry",
     "icon": "/store/browser/icon.webp",
     "name": "Web Browser",
-    "file": "Web Browser.js"
+    "file": "Web Browser.js",
+    "version": "0.0.1 Beta",
+    "categories": [ "Internet" ]
 }

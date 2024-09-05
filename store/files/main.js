@@ -3,27 +3,35 @@ const win = new Window()
 win.icon.src = 'store/files/icon.png'
 win.title.innerText = 'File Manager'
 
-const root = new $('div')
-const bar = new $('input')
-const files = new $('div')
+const root = $('<div></div>')
+const bar = $('<input/>')
+const files = $('<div></div>')
 
 root.css({
-    display: flex,
+    display: 'flex',
     width: '100%',
     'flex-direction': 'column'
+})
+
+
+bar.css({
+    border: 'none',
+    outline: 'none',
+    'border-radius': '5px',
+    padding: '0 5px'
 })
 
 update('/')
 
 root.append(bar, files)
-win.append(root.element)
+win.append(root[0])
 
 function update(path) {
     const list = fs.list(path)
     const size = 80
     const count = Math.floor((win.width - 10) / size)
     
-    files.text = ''
+    files.empty()
     files.css({
         display: 'grid',
         'grid-template-columns': `repeat(${count},${size}px)`,
@@ -35,7 +43,7 @@ function update(path) {
     listDir(list, path)
     listFile(list, path)
     
-    bar.element.value = path
+    bar.val(path)
 }
 
 function listDir(list, path) {
@@ -101,7 +109,21 @@ function listFile(list, path) {
         `
 
         doc.onclick = () => {
-            eval(fs.read(Path.join(path, filename)))
+            if(filename.endsWith('.js'))
+                eval(fs.read(Path.join(path, filename)))
+            else
+                run('/File Editor.js', Path.join(path, filename))
+        }
+        
+        doc.oncontextmenu = ev => {
+            const menu = new ContextMenu()
+            
+            menu.group().add(new FontIcon('file_open'), 'Open With File Editor', () => {
+                run('/File Editor.js', Path.join(path, filename))
+            })
+            
+            menu.showAt(ev.pageX, ev.pageY)
+            ev.preventDefault()
         }
 
         doc.append(icon, name)
@@ -113,5 +135,3 @@ function listFile(list, path) {
 function getIcon(name) {
     return `/store/files/icon/${name}`
 }
-
-function gridItem(icon, name, click) {}

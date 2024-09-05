@@ -14,8 +14,8 @@
     
     <script type="module">
         async function main() {
-            const storejs = await (await fetch('./Store.js')).text()
-            const storejson = await (await fetch('./Store.json')).text()
+            const storejs = await (await fetch('/store/store/main.js')).text()
+            const storejson = await (await fetch('/store/store/entry.json')).text()
             
             fs.write('Store.js', storejs)
             

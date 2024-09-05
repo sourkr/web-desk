@@ -1,3 +1,22 @@
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    /* background: red; */
+}
+
+::-webkit-scrollbar-thumb {
+    background: hsl(0 0 100);
+    border-radius: 5px;
+    transition: .5s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    transition: .5s;
+    background: hsl(0 0 95);
+}
+    
 .context-menu {
     position: absolute;
     background: hsla(0deg, 0%, 100%, .5);
@@ -23,7 +42,7 @@ body {
     background: url(wallpaper.jpg) no-repeat center;
     background-size: cover;
     height: 100svh;
-    width: 100vw;
+    width: 100svw;
     flex-direction: column;
     padding: 0;
     margin: 0;
@@ -42,10 +61,9 @@ desktop {
     background: hsla(0deg, 0%, 100%, .5);
     backdrop-filter: blur(5px);
     border-radius: 5px 5px 5px 5px;
-    /* overflow: hidden; */
-    /* padding: 0 5px 5px 5px; */
     flex-direction: column;
     border: 1px solid white;
+    box-shadow: 0 0 5px hsl(0 0 50 / .5);
 }
 
 .frame .titlebar {

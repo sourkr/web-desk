@@ -2,12 +2,11 @@ const menus = new Set()
 
 class ContextMenu {
     constructor() {
-        this.root = new $('div')
-        this.root.class.add('context-menu')
+        this.root = $('<div class="context-menu"></div>')
     }
     
     group() {
-        return new ContextMenuGroup(this.root)
+        return new ContextMenuGroup(this)
     }
     
     showAt(x, y, anchor = 'top-left') {
@@ -16,7 +15,7 @@ class ContextMenu {
         this.root.css(a[1], x + 'px')
         this.root.css(a[0], y + 'px')
         
-        $(document.body).append(this.root)
+        $('body').append(this.root)
         menus.add(this)
     }
     
@@ -28,102 +27,84 @@ class ContextMenu {
 
 class ContextMenuGroup {
     constructor(menu) {
-        this.group = menu.append(new $('div'))
+        this.menu = menu
+        this.group = $('<div></div>').appendTo(menu.root)
     }
     
     add(icon, name, click) {
-        const item = this.group.append(new $('div'))
-        const img = new Image(24, 24)
-        const title = new $('span')
+        const item = $('<div class="ripple"></div>').appendTo(this.group)
+        const title = $(`<span>${name}</span>`)
         
-        img.src = icon
-        title.text = name
-        item.on('click', click)
+        icon.setSize(24)
         
-        item.append(img, title)
+        item.on('click', () => {
+            click()
+            this.menu.hide()
+        })
+        
+        item.append(icon, title)
     }
 }
 
-window.addEventListener('click', ev => {
-    let prevent = true
+function ripple(ele, ev) {
+    const rippe = $('<span></span>').appendTo(ele)
+    const size = 4 * Math.max(ele.width(), ele.height())
+    
+    ele.css('position', 'relative').css('overflow', 'hidden')
+    
+    rippe.css({
+        position: 'absolute',
+        background: 'hsl(0 0 50 / .5)',
+        'border-radius': '50%',
+        width: size + 'px',
+        height: size + 'px',
+        top: (ev.pageY - ele.offset().top - size / 2) + 'px',
+        left: (ev.pageX - ele.offset().left - size / 2) + 'px',
+        // transition: '.5s',
+        scale: 0,
+        opacity: 1,
+        'transition-property': 'scale opacity',
+    })
+    
+    requestAnimationFrame(() => {
+        rippe.css('transition', '.5s')
+            .css('scale', '1')
+            .css('opacity', '0')
+    })
+    
+    setTimeout(() => rippe.remove(), 500)
+}
+
+let preventClick = false
+
+$(window).on('mousedown', ev => {
+    let prevent = menus.size != 0
     
     for(let menu of menus) {
-        if(menu.root.element.contains(ev.target))
+        if($.contains(menu.root[0], ev.target))
             prevent = false
     }
     
-    if(menus.size != 0 && prevent) {
+    if(prevent) {
+        menus.forEach(menu => menu.hide())
         ev.preventDefault()
         ev.stopImmediatePropagation()
+        preventClick = true
+        return
     }
     
-    menus.forEach(menu => menu.hide())
+    if($(ev.target).hasClass('ripple')) ripple($(ev.target), ev)
+    else {
+        const parent = $(ev.target).parent('.ripple')
+        // console.log(parent)
+        if(parent.length) ripple(parent, ev)
+    }
+})
+
+window.addEventListener('click', ev => {
+    if(preventClick) {
+        ev.preventDefault()
+        ev.stopImmediatePropagation()
+        preventClick = false
+    }
 }, true)
-
-function $(selector) {
-    if(selector instanceof Node) return new Query([selector])
-    if(selector instanceof Query) return selector
-    if(!this || this == window) return new Query(document.querySelectorAll(selector))
-    return $(document.createElement(selector))
-}
-
-class Query {
-    constructor(elements) {
-        this.elements = elements
-    }
-    
-    forEach(cb) {
-        for(let i = 0; i < this.elements.length; i++)
-            cb(this.elements[i])
-    }
-    
-    append(...childs) {
-        childs.forEach(child => {
-            if(child instanceof Query) this.element.append(...child.elements)
-            else this.element.append(child)
-        })
-        
-        
-        return $(childs[0])
-    }
-    
-    css(...pairs) {
-        if(typeof pairs[0] == 'object') {
-            pairs = Object.entries(pairs[0]).flat()
-        }
-        
-        for(let i = 0; i < pairs.length; i += 2) {
-            this.forEach(e => e.style.setProperty(pairs[i], pairs[i + 1]))
-        }
-    }
-    
-    on(event, listener) {
-        this.forEach(e => e.addEventListener(event, listener))
-    }
-    
-    remove() {
-        this.forEach(e => e.remove())
-    }
-    
-    set text(val) {
-        this.forEach(e => e.innerText = val)
-    }
-    
-    get element() {
-        return this.elements[0]
-    }
-    
-    get class() {
-        return new ClassList(this)
-    }
-}
-
-class ClassList {
-    constructor(list) {
-        this.list = list
-    }
-    
-    add(name) {
-        this.list.forEach(e => e.classList.add(name))
-    }
-}

@@ -1,8 +1,6 @@
 const win = new Window()
 
-const term = $(`<pre>
-    <span id="out"></span><span id="inp" contenteditable="true"></span>
-</pre>`)
+const term = $(`<pre><span id="out"></span><span id="inp" contenteditable="true"></span></pre>`)
 
 const out = term.children('#out')
 const inp = term.children('#inp')

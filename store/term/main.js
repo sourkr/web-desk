@@ -40,8 +40,8 @@ async function runcl(cl) {
         case 'sourc': {
             const compiler = new Compiler()
             const code = fs.read(args[2])
-            const out = compiler.compile(code)
-            fs.write(args[1], out)
+            const output = compiler.compile(code, msg => out.append(msg))
+            fs.write(args[1], output)
             break
         }
         

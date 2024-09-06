@@ -257,7 +257,7 @@ class Parser extends BaseParser {
     
     while(this.has()) {
       list.push(this.spec(parse))
-      console.log(list)
+      
       if(this.is('punc', end)) return this.skip(), list.filter(Boolean)
       if(sep) {
         if(!this.is('punc', sep)) return list

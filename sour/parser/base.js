@@ -1,15 +1,5 @@
 const skipable = ['space', 'cmt']
 
-// const alias = {
-//   ident: 'identifier',
-//   int: 'integer',
-//   float: 'float',
-//   bool: 'boolean',
-//   eof: 'end of file',
-//   str: 'string',
-//   unknown: 'unknown token'
-// }
-
 class BaseParser {
   errors = []
   body = []
@@ -102,7 +92,7 @@ class BaseParser {
   }
   
   #err(msg, tok) {
-    const err = { msg, file: this.#file, start: tok.start, end: tok.end }
+    const err = { msg: `ParseError: ${msg}`, file: this.#file, start: tok.start, end: tok.end }
     this.errors.push(err)
   }
   

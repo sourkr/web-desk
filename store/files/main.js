@@ -1,17 +1,17 @@
 const win = new Window()
+const root = $('<div></div>')
+const toolbar = createToolbar()
+const files = $('<div></div>')
+const stack = []
+const mode = process.argv[1] || 'normal'
 
 win.icon.src = 'store/files/icon.png'
 win.title.innerText = 'File Manager'
 
-const root = $('<div></div>')
-const toolbar = createToolbar()
-const files = $('<div></div>')
-
-const stack = []
-
 root.css({
     display: 'flex',
     width: '100%',
+    height: '100%',
     'flex-direction': 'column'
 })
 
@@ -19,6 +19,29 @@ update('/')
 
 root.append(toolbar, files)
 win.append(root[0])
+
+root.on('contextmenu', ev => {
+    if(ev.target != root[0] && ev.target != files[0]) return
+    
+    const menu = new ContextMenu()
+    const group = menu.group()
+    
+    group.add(new FontIcon('note_add'), 'Create New File', () => {
+        const win = new Window()
+        const name = $('<input/>')
+        
+        win.icon.src = 'store/files/icon.png'
+        win.title.innerText = 'File Manager'
+        win.append(name[0])
+        
+        name.on('change', () => {
+            fs.write(Path.join(stack.at(-1), name.val()))
+            win.close()
+        })
+    })
+    
+    menu.showAt(ev.pageX, ev.pageY)
+})
 
 function update(path) {
     const list = fs.list(path)

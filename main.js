@@ -60,14 +60,7 @@ function ImageIcon(src) {
 }
 
 function FontIcon(code) {
-    const span = new $('span')
-    
-    span.class.add('material-symbols-rounded')
-    span.text = code
-    
-    span.setSize = s => {
-        span.css('font-size', s + 'px')
-    }
-    
+    const span = $(`<span class="material-symbols-rounded">${code}</span>`)
+    span.setSize = s => span.css('font-size', s + 'px')
     return span
 } 

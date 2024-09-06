@@ -2,7 +2,7 @@
     "type": "app-entry",
     "icon": "/store/term/icon.png",
     "name": "Terminal",
-    "file": "Terminal",
+    "file": "Terminal.js",
     "version": "0.0.2 Beta",
     "categories": ["System", "Utility"]
 }

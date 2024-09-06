@@ -11,4 +11,25 @@ term.append(inp)
 
 inp.focus()
 
-term.onclick = () => inp.focus()
+term.on('click', () => inp.focus())
+
+inp.on('keydown', ev => {
+    if(ev.key != 'Enter') return
+    
+    inp.remove()
+    term.append(inp.val())
+    runcl(inp.val())
+    inp.empty()
+    term.append(inp)
+})
+
+function runcl(cl) {
+    const args = cl.split(' ')
+    
+    switch (args) {
+        // case 'sourc'
+        
+        default:
+            term.append(`bash: ${args[0]}: Command not found`)
+    }
+}

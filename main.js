@@ -27,6 +27,16 @@ $('#start').on('click', () => {
     menu.showAt(6, 36, 'bottom-left')
 })
 
+function exec(file) {
+    const code = fs.read(file)
+    const worker = new Worker('worker.js')
+    
+    worker.onmessage = ({ data }) => {
+        if(data[0] == 93) worker.terminate()
+    }
+    
+    worker.postMessage([2, code])
+}
 
 
 function run(...argv) {

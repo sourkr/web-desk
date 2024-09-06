@@ -62,6 +62,12 @@ class FileSystem {
         return this.#file(path).data
     }
     
+    delete(path) {
+        const parent = this.#file(Path.parent(path))
+        delete parent.files[Path.filename(path)]
+        this.#save()
+    }
+    
     #save() {
         localStorage.setItem(FS_NAME, JSON.stringify(filesys))
     }

@@ -32,6 +32,8 @@ async function main() {
         name.innerText = appdata.name
         name.style.cssText = `flex: 1;`
         
+        app.onclick = () => appInfo(appdata)
+        
         app.onmouseenter = () => app.style.background = 'hsla(0, 0%, 100%, .3)'
         app.onmouseleave = () => app.style.background = 'transparent'
         
@@ -86,7 +88,10 @@ function createButton(name, click) {
     
     btn.on('mouseenter', () => btn.css('background', 'hsl(215deg, 100%, 60%)'))
     btn.on('mouseleave', () => btn.css('background', 'hsl(215deg, 100%, 50%)'))
-    btn.on('click', click)
+    btn.on('click', ev => {
+        ev.stopPropagation()
+        click()
+    })
     
     return btn
 }
@@ -101,3 +106,16 @@ function hasUpdate(details) {
 }
 
 main()
+
+function appInfo(details) {
+    const win = new Window()
+    
+    win.icon.src = '/store/store/icon.png'
+    win.title.innerText = 'Store'
+    
+    if(isInstalled(details.name)) win.append(createButton('Uninstall', uninstall.bind(details))[0])
+}
+
+function uninstall() {
+     fs.delete(`/apps/${this.name}.json`)
+}

@@ -1,8 +1,8 @@
 {
     "type": "app-entry",
-    "icon": "/store/store/icon.png",
-    "name": "Store",
-    "file": "Store.js",
+    "icon": "/store/term/icon.png",
+    "name": "Terminal",
+    "file": "Terminal",
     "version": "0.0.2 Beta",
     "categories": ["System", "Utility"]
 }

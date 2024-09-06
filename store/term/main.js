@@ -1,35 +1,66 @@
 const win = new Window()
-const term = $(`<pre></pre>`)
-const inp = $(`<span contenteditable="true"></span>`)
+
+const term = $(`<pre>
+    <span id="out"></span><span id="inp" contenteditable="true"></span>
+</pre>`)
+
+const out = term.children('#out')
+const inp = term.children('#inp')
 
 win.icon.src = '/store/term/icon.png'
 win.title.innerText = 'Terminal'
 win.append(term[0])
 
-term.html('root@souros:~# ')
-term.append(inp)
+term.css({
+    width: '100%',
+    height: '100%'
+})
 
+// out.css('display', 'inline')
+
+out.html(getInfo())
 inp.focus()
 
 term.on('click', () => inp.focus())
 
-inp.on('keydown', ev => {
+inp.on('keydown', async ev => {
     if(ev.key != 'Enter') return
     
-    inp.remove()
-    term.append(inp.val())
-    runcl(inp.val())
+    const cl = inp.text()
+    
+    out.append(inp.html()).append('<br>')
     inp.empty()
-    term.append(inp)
+    await runcl(cl)
+    out.append(getInfo())
+    inp.empty()
 })
 
-function runcl(cl) {
+async function runcl(cl) {
     const args = cl.split(' ')
     
-    switch (args) {
-        // case 'sourc'
+    switch (args[0]) {
+        case 'sourc': {
+            const compiler = new Compiler()
+            const code = fs.read(args[2])
+            const out = compiler.compile(code)
+            fs.write(args[1], out)
+            break
+        }
+        
+        case 'exec': {
+            await exec(args[1], msg => out.append(msg))
+            break
+        }
         
         default:
-            term.append(`bash: ${args[0]}: Command not found`)
+            out.append(`bash: ${args[0]}: Command not found`)
     }
+}
+
+// function runCommand(args) {
+    
+// }
+
+function getInfo() {
+    return `root@webos:~# `
 }

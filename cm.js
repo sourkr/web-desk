@@ -52,17 +52,21 @@ class ContextMenuGroup {
     sub(icon, name) {
         const menu = new ContextMenu(this.menu)
         
-        const item = this.add(icon, name, () => {
-            const rect = item[0].getBoundingClientRect()
-            
-            this.menu.sub?.hide?.(true)
-            menu.showAt(rect.right + 5, rect.top)
-            this.menu.sub = menu
-            
-            return true
-        })
+        const item = this.add(icon, name, () => this.showSub(item, menu))
+        
+        item.on('mouseenter', () => this.showSub(item, menu))
         
         return menu
+    }
+    
+    showSub(item, menu) {
+        const rect = item[0].getBoundingClientRect()
+        
+        this.menu.sub?.hide?.(true)
+        menu.showAt(rect.right + 5, rect.top)
+        this.menu.sub = menu
+        
+        return true
     }
     
     remove(sub) {

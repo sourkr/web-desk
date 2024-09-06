@@ -3,7 +3,7 @@ const root = $('<div></div>')
 const toolbar = createToolbar()
 const files = $('<div></div>')
 const stack = []
-const mode = process.argv[1] || 'normal'
+const mode = process.argv[1] || 'view'
 
 win.icon.src = 'store/files/icon.png'
 win.title.innerText = 'File Manager'
@@ -85,6 +85,11 @@ function listFile(list, path) {
         const item = createItem(getIcon('file.png'), filename)
         
         item.on('click', () => {
+            if(mode == 'open') {
+                Channel.send(parseInt(process.argv[2]), Path.join(path, filename))
+                return
+            }
+            
             if(filename.endsWith('.js'))
                 run(Path.join(path, filename))
             else

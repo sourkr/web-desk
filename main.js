@@ -27,15 +27,26 @@ $('#start').on('click', () => {
     menu.showAt(6, 36, 'bottom-left')
 })
 
-function exec(file) {
-    const code = fs.read(file)
-    const worker = new Worker('worker.js')
-    
-    worker.onmessage = ({ data }) => {
-        if(data[0] == 93) worker.terminate()
-    }
-    
-    worker.postMessage([2, code])
+function exec(file, out) {
+    return new Promise((resolve, reject) => {
+        const code = fs.read(file)
+        const worker = new Worker('worker.js')
+        
+        worker.onmessage = ({ data }) => {
+            switch (data[0]) {
+                case 0:
+                    worker.terminate()
+                    resolve()
+                    break
+        
+                case 1:
+                    out(data[1])
+                    break
+            }
+        }
+        
+        worker.postMessage([2, code])
+    })
 }
 
 
@@ -63,4 +74,46 @@ function FontIcon(code) {
     const span = $(`<span class="material-symbols-rounded">${code}</span>`)
     span.setSize = s => span.css('font-size', s + 'px')
     return span
-} 
+}
+
+class IDList {
+    #map = new Map()
+    #avl = []
+    #count = 0
+    
+    #next() {
+        if(this.#avl.length) return this.#avl.shift()
+        return this.#count++
+    }
+    
+    add(val) {
+        const id = this.#next()
+        this.#map.set(id, val)
+        return id
+    }
+    
+    remove(id) {
+        this.#map.delete(id)
+        this.#avl.push(id)
+    }
+    
+    get(id) {
+        return this.#map.get(id)
+    }
+}
+
+const channels = new IDList()
+
+class Channel {
+    static create(cb) {
+        return channels.add(cb)
+    }
+    
+    static send(id, data) {
+        channels.get(id)(data)
+    }
+    
+    static destroy(id) {
+        channels.remove(id)
+    }
+}

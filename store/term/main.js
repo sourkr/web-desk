@@ -31,6 +31,8 @@ inp.on('keydown', async ev => {
     await runcl(cl)
     out.append(getInfo())
     inp.empty()
+    
+    ev.preventDefault()
 })
 
 async function runcl(cl) {

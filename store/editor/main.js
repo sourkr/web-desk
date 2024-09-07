@@ -43,9 +43,18 @@ fileTab.on('click', () => {
         run('/File Manager.js', 'open', channel + '')
     })
     
+    group.add(new FontIcon('save_as'), 'Save As', () => {
+        const channel = Channel.create(path => {
+            write(path)
+            Channel.destroy(channel)
+        })
+    
+        run('/File Manager.js', 'open', channel + '')
+    })
+    
+    
     menu.showAt(fileTab.offset().left, fileTab.offset().top + fileTab.outerHeight())
 })
-
 
 if(process.argv[1] && fs.exist(process.argv[1])) {
     opened = process.argv[1]
@@ -55,8 +64,12 @@ if(process.argv[1] && fs.exist(process.argv[1])) {
 textarea.on('keydown', ev => {
     if(ev.ctrlKey && ev.key == 's') {
         ev.preventDefault()
-        if(opened) fs.write(opened, textarea.val())
+        if(opened) write(opened)
     }
+    
+    // if(ev.key == 'Tab') {
+    //     ev.preventDefault()
+    // }
 })
 
 win.append(root[0])
@@ -66,4 +79,8 @@ function edit(path) {
     $(win.title).text(path)
     textarea.val(fs.read(path))
     opened = path
+}
+
+function write(path) {
+    fs.write(path, textarea.val())
 }

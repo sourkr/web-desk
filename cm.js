@@ -54,7 +54,7 @@ class ContextMenuGroup {
         
         const item = this.add(icon, name, () => this.showSub(item, menu))
         
-        item.on('mouseenter', () => this.showSub(item, menu))
+        // item.on('mouseenter', () => this.showSub(item, menu))
         
         return menu
     }

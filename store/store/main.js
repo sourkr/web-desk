@@ -32,7 +32,7 @@ async function main() {
         name.innerText = appdata.name
         name.style.cssText = `flex: 1;`
         
-        app.onclick = () => appInfo(appdata)
+        app.onclick = () => appInfo(appdata, appid)
         
         app.onmouseenter = () => app.style.background = 'hsla(0, 0%, 100%, .3)'
         app.onmouseleave = () => app.style.background = 'transparent'
@@ -46,13 +46,15 @@ async function main() {
 
 function getButton(details, id) {
     if(!isInstalled(details.name)) {
-        const btn = createButton('Install', async () => {
-            const code = await (await fetch(`store/${id}/main.js`)).text()
+        const btn = createButton('Install')
+        
+        btn.one('click', async () => {
+            install()
+            btn.text('Open')
             
-            fs.write(`/apps/${details.name}.json`, JSON.stringify(details))
-            fs.write(details.file, code)
-            
-            btn.replaceWith(getButton(details, id))
+            btn.one('click', () => {
+                
+            })
         })
         
         return btn
@@ -88,10 +90,6 @@ function createButton(name, click) {
     
     btn.on('mouseenter', () => btn.css('background', 'hsl(215deg, 100%, 60%)'))
     btn.on('mouseleave', () => btn.css('background', 'hsl(215deg, 100%, 50%)'))
-    btn.on('click', ev => {
-        ev.stopPropagation()
-        click()
-    })
     
     return btn
 }
@@ -107,15 +105,27 @@ function hasUpdate(details) {
 
 main()
 
-function appInfo(details) {
+function appInfo(details, id) {
     const win = new Window()
     
     win.icon.src = '/store/store/icon.png'
     win.title.innerText = 'Store'
     
-    if(isInstalled(details.name)) win.append(createButton('Uninstall', uninstall.bind(details))[0])
+    if(isInstalled(details.name)) win.append(createButton('Uninstall', () => {
+        uninstall(details)
+        
+    })[0])
 }
 
-function uninstall() {
+function uninstall(details) {
      fs.delete(`/apps/${this.name}.json`)
+}
+
+async function install(id) {
+    const code = await (await fetch(`store/${id}/main.js`)).text()
+    
+    fs.write(`/apps/${this.name}.json`, JSON.stringify(this))
+    fs.write(this.file, code)
+    
+    btn.replaceWith(getButton(this, id))
 }

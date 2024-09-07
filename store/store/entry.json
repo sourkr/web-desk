@@ -3,6 +3,6 @@
     "icon": "/store/store/icon.png",
     "name": "Store",
     "file": "Store.js",
-    "version": "0.0.2 Beta",
+    "version": "0.0.3 Beta",
     "categories": ["System", "Utility"]
 }

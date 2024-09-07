@@ -40,6 +40,20 @@ root.on('contextmenu', ev => {
         })
     })
     
+    group.add(new FontIcon('create_new_folder'), 'Create New Folder', () => {
+        const win = new Window()
+        const name = $('<input/>')
+    
+        win.icon.src = 'store/files/icon.png'
+        win.title.innerText = 'File Manager'
+        win.append(name[0])
+    
+        name.on('change', () => {
+            fs.write(Path.join(stack.at(-1), name.val()))
+            win.close()
+        })
+    })
+    
     menu.showAt(ev.pageX, ev.pageY)
 })
 

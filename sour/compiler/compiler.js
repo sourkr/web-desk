@@ -1,5 +1,9 @@
-// 3 to 4
+// 3 to 5
 class Compiler {
+    funs = new Map([
+        [ 'print', { args: [ 'str' ], compile: stmt => `postMessage([1,${stmt.args[0].source}])`} ]
+    ])
+    
     compile(code, out) {
         const parser = new Parser(code)
         
@@ -35,12 +39,30 @@ class Compiler {
         if(stmt.type == 'call') {
             const name = stmt.access.value
             
-            if(name != 'print') this.err(`(4) cannot find function ${name}`, stmt.access)
+            if(!this.funs.has(name)) this.err(`(4) cannot find function ${name}`, stmt.access)
+            const fun = this.funs.get(name)
             
-            return `postMessage([1,${stmt.args[0].source}])`
+            if(stmt.args.length != fun.args.length) this.err(`(5) required 1 arguments but got ${stmt.args.length}`, stmt.args)
+            
+            return fun.compile(stmt)
+        }
+        
+        if(stmt.type == 'fun') {
+            const name = stmt.name.value
+            
+            this.funs.set(name, {
+                args: [],
+                compile: this.compFun
+            })
+            
+            return `function ${name}() {${this.compBody(stmt.body).join(';')}}`
         }
         
         console.warn(stmt)
+    }
+    
+    compFun(fun) {
+        return `${fun.access.value}(${fun.args.map(e => e.source)})`
     }
     
     err(msg, tok) {
@@ -62,9 +84,11 @@ function formatError(code, err) {
 }
 
 const code = 
-`var msg: str
-msg = "Hello, World!"
-print(a)`
+`fun main(): void {
+    print("Hello, Wolrd!")
+}
+
+main()`
 
 const compiler = new Compiler()
 console.log(compiler.compile(code, msg => console.error(msg)))

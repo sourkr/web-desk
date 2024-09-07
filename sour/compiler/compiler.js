@@ -1,7 +1,8 @@
 // 3 to 5
 class Compiler {
     funs = new Map([
-        [ 'print', { args: [ 'str' ], compile: stmt => `postMessage([1,${stmt.args[0].source}])`} ]
+        [ 'print', { params: [ 'str' ], compile: stmt => `postMessage([1,${stmt.args[0].source}])`, ret: 'void'} ],
+        [ 'guiCall', { params: [ 'num' ], compile: stmt => `postMessage([2,${stmt.args[0].source}])`, ret: 'num'} ],
     ])
     
     compile(code, out) {
@@ -42,7 +43,12 @@ class Compiler {
             if(!this.funs.has(name)) this.err(`(4) cannot find function ${name}`, stmt.access)
             const fun = this.funs.get(name)
             
-            if(stmt.args.length != fun.args.length) this.err(`(5) required 1 arguments but got ${stmt.args.length}`, stmt.args)
+            if(stmt.args.length != fun.params.length) this.err(`(5) required 1 arguments but got ${stmt.args.length}`, stmt.args)
+            
+            for(let i = 0; i < fun.params.length; i++) {
+                if(fun.params[i] != stmt.args[i].type)
+                    this.err(`(6) ${stmt.args[i].type} cannot be assigned to ${fun.params[i]}`, stmt.args[i])
+            }
             
             return fun.compile(stmt)
         }
@@ -51,7 +57,7 @@ class Compiler {
             const name = stmt.name.value
             
             this.funs.set(name, {
-                args: [],
+                params: [],
                 compile: this.compFun
             })
             
@@ -84,11 +90,8 @@ function formatError(code, err) {
 }
 
 const code = 
-`fun main(): void {
-    print("Hello, Wolrd!")
-}
-
-main()`
+`var win: num
+win = guiCall(1)`
 
 const compiler = new Compiler()
 console.log(compiler.compile(code, msg => console.error(msg)))

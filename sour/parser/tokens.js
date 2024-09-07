@@ -70,7 +70,7 @@ class Tokenizer {
       return this.#token('float', str)
     }
     
-    return this.#token('int', str)
+    return this.#token('num', str)
   }
   
   #parseIdent() {

@@ -47,7 +47,7 @@ class Parser extends BaseParser {
     if(this.is('key', 'new')) return this.spec(this.parseNew)
     
     if(this.is('ident')) return this.spec(this.parseIdent)
-    if(this.is('int'))   return this.mayOp(this.next('int'))
+    if(this.is('num'))   return this.mayOp(this.next('num'))
     if(this.is('str'))   return this.next('str')
     
     // switch (this.#peekToken().type) {

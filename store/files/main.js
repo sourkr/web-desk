@@ -15,6 +15,8 @@ root.css({
     'flex-direction': 'column'
 })
 
+files.css('overflow-y', 'scroll')
+
 update('/')
 
 root.append(toolbar, files)
@@ -52,6 +54,20 @@ root.on('contextmenu', ev => {
             fs.write(Path.join(stack.at(-1), name.val()))
             win.close()
         })
+    })
+    
+    group.add(new FontIcon('upload_file'), 'Import As Image', () => {
+        const filePicker = $('<input type="file">')
+        
+        filePicker.on('change', ev => {
+            const file = ev.target.files[0]
+            const reader = new FileReader()
+            
+            reader.onload = ev => fs.write(file.name, ev.target.result)
+            reader.readAsText(file)
+        })
+        
+        filePicker.trigger('click')
     })
     
     menu.showAt(ev.pageX, ev.pageY)
@@ -142,6 +158,10 @@ function createItem(icon, name) {
         'align-items': 'center',
         'padding-top': '10px',
         overflow: 'hidden'
+    })
+    
+    item.children('span').css({
+        'word-wrap': 'word-break'
     })
     
     return item

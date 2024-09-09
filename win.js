@@ -16,6 +16,8 @@ class Dialog {
         this.y = innerHeight / 2 - this.height / 2
         this.x = innerWidth / 2 - this.width / 2
         
+        $(this.title).text(title)
+        
         windows.add(this)
     }
     
@@ -120,7 +122,7 @@ class Dialog {
 
 class Window extends Dialog {
     constructor(title) {
-        super(title)
+        super(title || 'Untitled')
         
         this.width = def.width
         this.height = def.height

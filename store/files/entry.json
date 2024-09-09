@@ -3,6 +3,6 @@
     "icon": "/store/files/icon.png",
     "name": "File Manager",
     "file": "File Manager.js",
-    "version": "0.0.5 Beta",
+    "version": "0.0.6 Beta",
     "categories": ["System", "Utility"]
 }

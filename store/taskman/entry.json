@@ -3,6 +3,6 @@
     "icon": "/store/taskman/icon.png",
     "name": "Task Manager",
     "file": "Task Manager.js",
-    "version": "0.0.2 Beta",
+    "version": "0.0.3 Beta",
     "categories": ["System", "Utility"]
 }

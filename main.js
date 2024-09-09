@@ -42,6 +42,9 @@ function exec(file, out) {
                 case 1:
                     out(data[1])
                     break
+                    
+                case 2:
+                    new Window()
             }
         }
         
@@ -99,6 +102,10 @@ class IDList {
     
     get(id) {
         return this.#map.get(id)
+    }
+    
+    keys() {
+        return this.#map.keys()
     }
 }
 

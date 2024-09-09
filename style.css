@@ -99,25 +99,32 @@ desktop {
 }
 
 .window {
-    display: flex;
-    overflow: hidden;
+    display: block;
+    overflow: scroll;
     height: 100%;
     margin-top: 3px;
     border-radius: 0 0 5px 5px;
     /* padding: 2px; */
     margin: 0 5px 5px 5px;
+    overflow: hidden;
+}
+
+.dialog {
+    height: fit-content;
+    width: fit-content;
 }
 
 panel {
     display: flex;
-    background: hsla(0deg, 0%, 100%, .4);
+    background: hsla(0deg, 0%, 100%, .1);
     padding: 2px;
     transition: .5s;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(2px);
+    color: hsl(0 0 100 / .7);
 }
 
 panel:hover {
-    background: hsl(0deg, 0%, 100%, .6)
+    background: hsl(0deg, 0%, 100%, .2)
 }
 
 #start {
@@ -127,7 +134,7 @@ panel:hover {
 }
 
 #start:hover {
-    background: hsla(0deg, 0%, 100%, .3);
+    background: hsla(0deg, 0%, 100%, .1);
 }
 
 start-menu {

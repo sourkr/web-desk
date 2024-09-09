@@ -29,6 +29,7 @@ inp.on('keydown', async ev => {
     out.append(inp.html()).append('<br>')
     inp.empty()
     await runcl(cl)
+    if(!out.text().endsWith('\n')) out.append('\n')
     out.append(getInfo())
     inp.empty()
     
@@ -47,10 +48,13 @@ async function runcl(cl) {
             break
         }
         
-        case 'exec': {
+        case 'exec':
             await exec(args[1], msg => out.append(msg))
             break
-        }
+        
+        case 'pwd':
+            out.append('/')
+            break
         
         default:
             out.append(`bash: ${args[0]}: Command not found`)

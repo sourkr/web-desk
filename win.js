@@ -2,14 +2,16 @@ const windows = new Set()
 
 const def = {
     width: 400,
-    height: innerHeight / 2
+    height: 300
 }
 
 if(innerWidth < def.width) def.width = 300
 
-class Window {
-    constructor(width = def.width, height = 300) {
-        this.createFrame(width, height)
+class Dialog {
+    #frame
+    
+    constructor(title) {
+        this.createFrame()
         
         this.y = innerHeight / 2 - this.height / 2
         this.x = innerWidth / 2 - this.width / 2
@@ -17,17 +19,16 @@ class Window {
         windows.add(this)
     }
     
-    createFrame(width, height) {
-        this.frame = $(`<div class="frame"></div>`).appendTo($('desktop'))
+    createFrame() {
+        this.#frame = $(`<div class="frame">
+            <div class="titlebar"></div>
+        </div>`).appendTo($('desktop'))
+        this.frame = this.#frame
         
-        this.width = width
-        this.height = height
-        
-        this.titlebar = document.createElement('div')
+        const titlebar = this.#frame.find('.titlebar')
         this.window = document.createElement('div')
         
-        this.titlebar.classList.add('titlebar')
-        this.window.classList.add('window')
+        this.window.classList.add('window', 'dialog')
         
         this.icon = new Image(20, 20)
         this.title = document.createElement('span')
@@ -37,13 +38,11 @@ class Window {
         this.icons.classList.add('icons')
         
         this.icons.innerHTML = `
-            <span class="material-symbols-rounded">minimize</span>
-            <span class="material-symbols-rounded">crop_square</span>
             <span id="close" class="material-symbols-rounded ripple">close</span>
         `
         
-        this.titlebar.append(this.icon, this.title, this.icons)
-        this.frame.append(this.titlebar, this.window)
+        titlebar.append(/*this.icon,*/ this.title, this.icons)
+        this.frame.append(titlebar, this.window)
         
         const observer = new Observer($(this.title))
         
@@ -71,7 +70,8 @@ class Window {
         
         this.observer = observer
         this.resizer = resizer
-        this.icons.children[2].onclick = () => this.close()
+        
+        $(this.icons).children('#close').on('click', () => this.close())
     }
 
     append(child) {
@@ -115,5 +115,21 @@ class Window {
 
     get x() {
         return this.frame.offset().left
+    }
+}
+
+class Window extends Dialog {
+    constructor(title) {
+        super(title)
+        
+        this.width = def.width
+        this.height = def.height
+        
+        this.y = innerHeight / 2 - this.height / 2
+        this.x = innerWidth / 2 - this.width / 2
+        
+        $(this.window)
+            .css('width', 'calc(100% - 10px)')
+            .css('height', '100%')
     }
 }

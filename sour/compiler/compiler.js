@@ -1,8 +1,8 @@
 // 3 to 5
 class Compiler {
     funs = new Map([
-        [ 'print', { params: [ 'str' ], compile: stmt => `postMessage([1,${stmt.args[0].source}])`, ret: 'void'} ],
-        [ 'guiCall', { params: [ 'num' ], compile: stmt => `postMessage([2,${stmt.args[0].source}])`, ret: 'num'} ],
+        [ 'print', { params: [ 'str' ], compile: stmt => `a(1,${stmt.args[0].source})`, ret: 'void'} ],
+        [ 'guiCall', { params: [ 'num' ], compile: stmt => `await b(${stmt.args[0].source})`, ret: 'num'} ],
     ])
     
     compile(code, out) {
@@ -19,9 +19,9 @@ class Compiler {
         }
         
         const body = this.compBody(parser.body)
-        body.push('postMessage([0])')
+        body.push('a(0,-1)')
         
-        return body.join(';')
+        return `(async()=>{${body.join(';')}})()`
     }
     
     compBody(body) {
@@ -34,7 +34,7 @@ class Compiler {
         }
         
         if(stmt.type == 'assign') {
-            return `${stmt.access.value}=${stmt.value.source}`
+            return `${stmt.access.value}=${this.compStmt(stmt.value)}`
         }
         
         if(stmt.type == 'call') {
@@ -50,6 +50,7 @@ class Compiler {
                     this.err(`(6) ${stmt.args[i].type} cannot be assigned to ${fun.params[i]}`, stmt.args[i])
             }
             
+            console.log(fun)
             return fun.compile(stmt)
         }
         

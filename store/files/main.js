@@ -27,7 +27,7 @@ root.on('contextmenu', ev => {
     const group = menu.group()
     
     group.add(new FontIcon('note_add'), 'Create New File', () => {
-        const win = new Window()
+        const win = new Dialog()
         const name = $('<input/>')
         
         win.icon.src = 'store/files/icon.png'

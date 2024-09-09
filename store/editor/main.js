@@ -67,9 +67,11 @@ textarea.on('keydown', ev => {
         if(opened) write(opened)
     }
     
-    // if(ev.key == 'Tab') {
-    //     ev.preventDefault()
-    // }
+    if(ev.key == 'Tab') {
+        const index = textarea.prop('selectionStart')
+        textarea.val(textarea.val().slice(0, index) + '\t' + textarea.val().slice(index))
+        ev.preventDefault()
+    }
 })
 
 win.append(root[0])

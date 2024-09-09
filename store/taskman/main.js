@@ -9,13 +9,20 @@ function update() {
     list.empty()
     
     windows.forEach(win => {
-        list.append(`<div>
-            <img src="${$(win.icon).attr('src')}">
-            <span>${$(win.title).text()}<span>
+        const item = $(`<div>
+            <span>${$(win.title).text()}</span>
             <button>Kill</bunnton>
-        </div>`)
+        </div>`).appendTo(list)
         
-        list.fild('button').on('click', () => {
+        item.css({
+            display: 'flex',
+            gap: '5px',
+            'align-items': 'center'
+        })
+        
+        item.find('span').before(win.icon).css('flex', 1)
+        
+        item.find('button').on('click', () => {
             win.close()
             update()
         })

@@ -10,6 +10,10 @@
 <body>
     
     <a href="/">start</a>
+    
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+        
     <script src="fs.js">fs.js</script>
     
     <script type="module">
@@ -17,10 +21,13 @@
             const storejs = await (await fetch('/store/store/main.js')).text()
             const storejson = await (await fetch('/store/store/entry.json')).text()
             
-            fs.write('Store.js', storejs)
+            fs.write('/Store.js', storejs)
             
-            fs.mkdir('apps')
-            fs.write('apps/Store.json', storejson)
+            if(!fs.exists('/apps')) fs.mkdir('/apps')
+            fs.write('/apps/Store.json', storejson)
+            
+            if(!fs.exists('/deps')) fs.mkdir('/deps')
+            if(!fs.exists('/deps/deps.json')) fs.write('/deps/deps.json', "{}")
         }
         
         main()

@@ -4,5 +4,6 @@
     "name": "File Editor",
     "file": "File Editor.js",
     "version": "0.0.5 Beta",
-    "categories": ["Development", "System"]
+    "categories": ["Development", "System"],
+    "deps": ["menubar"]
 }

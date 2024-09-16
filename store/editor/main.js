@@ -1,17 +1,16 @@
+const MenuBar = require('menubar').default
+
 const win = new Window()
 
 win.icon.src = '/store/editor/icon.png'
 win.title.innerText = 'File Editor'
 
 const root = $(`<div>
-    <div id="menu-bar">
-        <span id="file">File</span>
-    </div>
     <textarea></textarea>
 </div>`)
 
-const fileTab = root.find('#file')
 const textarea = root.find('textarea')
+const menubar = new MenuBar()
 
 let opened = null
 
@@ -30,33 +29,24 @@ textarea.css({
     resize: 'none'
 })
 
-fileTab.on('click', () => {
-    const menu = new ContextMenu()
-    const group = menu.group()
-    
-    group.add(new FontIcon('file_open'), 'Open New File', () => {
-        const channel = Channel.create(path => {
-            edit(path)
-            Channel.destroy(channel)
-        })
-        
-        run('/File Manager.js', 'open', channel + '')
+textarea.before(menubar.bar)
+
+const openGroup = menubar.group()
+const saveGroup = menubar.group()
+
+openGroup.add(new FontIcon('file_open'), 'Open New File', () => {
+    const channel = Channel.create(path => {
+        edit(path)
+        Channel.destroy(channel)
     })
-    
-    group.add(new FontIcon('save_as'), 'Save As', () => {
-        const channel = Channel.create(path => {
-            write(path)
-            Channel.destroy(channel)
-        })
-    
-        run('/File Manager.js', 'open', channel + '')
-    })
-    
-    
-    menu.showAt(fileTab.offset().left, fileTab.offset().top + fileTab.outerHeight())
+
+    run('/File Manager.js', 'open', channel + '')
 })
 
-if(process.argv[1] && fs.exist(process.argv[1])) {
+saveGroup.add(new FontIcon('save'), 'Save', save)
+saveGroup.add(new FontIcon('save_as'), 'Save As', saveAs)
+
+if(process.argv[1] && fs.exists(process.argv[1])) {
     opened = process.argv[1]
     textarea.val(fs.read(process.argv[1]))
 }
@@ -64,7 +54,7 @@ if(process.argv[1] && fs.exist(process.argv[1])) {
 textarea.on('keydown', ev => {
     if(ev.ctrlKey && ev.key == 's') {
         ev.preventDefault()
-        if(opened) write(opened)
+        save()
     }
     
     if(ev.key == 'Tab') {
@@ -76,7 +66,6 @@ textarea.on('keydown', ev => {
 
 win.append(root[0])
 
-
 function edit(path) {
     $(win.title).text(path)
     textarea.val(fs.read(path))
@@ -85,4 +74,14 @@ function edit(path) {
 
 function write(path) {
     fs.write(path, textarea.val())
+}
+
+function save() {
+    if(opened) write(opened)
+    else saveAs()
+}
+
+function saveAs() {
+    const channel = Channel.create(path => { write(path); Channel.destroy(channel) })
+    run('/File Manager.js', 'open', channel + '')
 }

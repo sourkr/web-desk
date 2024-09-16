@@ -116,11 +116,18 @@ desktop {
 
 panel {
     display: flex;
-    background: hsla(0deg, 0%, 100%, .1);
+    background: hsla(0deg, 0%, 100%, .3);
     padding: 2px;
-    transition: .5s;
     backdrop-filter: blur(2px);
-    color: hsl(0 0 100 / .7);
+    color: hsl(0 0 0 / .7);
+}
+
+.spacer {
+    flex: 1;
+}
+
+#date {
+    margin-right: 5px;
 }
 
 #start {

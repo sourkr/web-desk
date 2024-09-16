@@ -27,6 +27,29 @@ $('#start').on('click', () => {
     menu.showAt(6, 36, 'bottom-left')
 })
 
+function panel() {
+    setInterval(() => {
+        const date = new Date()
+        const min = `${date.getMinutes()}`.padStart(2, '0')
+        
+        $('#date').text(`${date.getHours()}:${min}`)
+    }, 1000)
+}
+
+function refresh() {
+    if(!fs.exists('/settings/desktop.json')) return
+    
+    const prefrences = JSON.parse(fs.read('/settings/desktop.json'))
+    
+    if(prefrences.wallpaper == 'default') {
+        $('body').css('background-image', 'url(wallpaper.jpg)')
+        return
+    }
+    
+    if(!fs.exists(prefrences.file)) return
+    $('body').css('background-image', `url(${fs.read(prefrences.file)})`)
+}
+
 function exec(file, out) {
     return new Promise((resolve, reject) => {
         const code = fs.read(file)
@@ -124,3 +147,12 @@ class Channel {
         channels.remove(id)
     }
 }
+
+function require(dep) {
+    const exports = {}
+    eval(fs.read(`/deps/${dep}.js`))
+    return exports
+}
+
+refresh()
+panel()

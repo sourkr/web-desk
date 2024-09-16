@@ -1,0 +1,8 @@
+{
+    "type": "app-entry",
+    "icon": "/store/deskset/icon.png",
+    "name": "Desktop Preferences",
+    "file": "Desktop Preferences.js",
+    "version": "0.0.5 Beta",
+    "categories": ["System", "Settings"]
+}

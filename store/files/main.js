@@ -1,7 +1,8 @@
 const win = new Window()
 const root = $('<div></div>')
 const toolbar = createToolbar()
-const files = $('<div></div>')
+const container = $('<div><div id="files"></div></div>')
+const files = container.children('#files')
 const stack = []
 const mode = process.argv[1] || 'view'
 
@@ -15,11 +16,13 @@ root.css({
     'flex-direction': 'column'
 })
 
-files.css('overflow-y', 'scroll')
+container.css({
+    'overflow-y': 'scroll'
+})
 
 update('/')
 
-root.append(toolbar, files)
+root.append(toolbar, container)
 win.append(root[0])
 
 root.on('contextmenu', ev => {
@@ -63,8 +66,11 @@ root.on('contextmenu', ev => {
             const file = ev.target.files[0]
             const reader = new FileReader()
             
-            reader.onload = ev => fs.write(file.name, ev.target.result)
-            reader.readAsText(file)
+            reader.onload = ev => {
+                console.log(ev.target.result)
+                fs.write(file.name, ev.target.result)
+            }
+            reader.readAsDataURL(file)
         })
         
         filePicker.trigger('click')
@@ -84,6 +90,7 @@ function update(path) {
         'grid-template-columns': `repeat(${count},${size}px)`,
         // 'align-items': 'start',
         // 'justify-content': 'start',
+        gap: '10px',
         gridTemplateRows: 'fit-content(100%)'
     })
     
@@ -117,6 +124,7 @@ function listFile(list, path) {
         item.on('click', () => {
             if(mode == 'open') {
                 Channel.send(parseInt(process.argv[2]), Path.join(path, filename))
+                win.close()
                 return
             }
             
@@ -161,7 +169,8 @@ function createItem(icon, name) {
     })
     
     item.children('span').css({
-        'word-wrap': 'word-break'
+        'word-break': 'break-word',
+        'text-align': 'center'
     })
     
     return item

@@ -92,7 +92,7 @@ function createButton(name, click) {
 }
 
 function isInstalled(name) {
-    return fs.exist(Path.join('/apps/', name + '.json'))
+    return fs.exists(`/apps/${name}.json`) && fs.exists(`/${name}.js`)
 }
 
 function hasUpdate(details) {
@@ -126,6 +126,19 @@ function uninstall(details, id, btn) {
     fs.delete(`/apps/${this.name}.json`)
     fs.delete(details.file)
     
+    if('deps' in details) {
+        for (let dep of details.deps) {
+            const deps = JSON.parse(fs.read('/deps/deps.json'))
+        
+            if(--deps[dep].usage == 0) {
+                fs.delete(`/deps/${dep}.js`)
+                delete deps[dep]
+            }
+            
+            fs.write('/deps/deps.json', JSON.stringify(deps))
+        }
+    }
+    
     btn.text('Install')
     btn.one('click', install.bind(null, details, id, btn))
 }
@@ -135,6 +148,8 @@ async function install(details, id, btn, win) {
     
     fs.write(`/apps/${details.name}.json`, JSON.stringify(details))
     fs.write(details.file, code)
+    
+    if('deps' in details) await installDeps(details.deps)
     
     btn.text('Open')
     btn.on('click', () => run(details.file))
@@ -151,4 +166,28 @@ async function update(details, id) {
     
     fs.write(`/apps/${details.name}.json`, JSON.stringify(details))
     fs.write(details.file, code)
+    
+    if('deps' in details) await installDeps(details.deps)
+}
+
+async function installDeps(list, increase = true) {
+    const vers = await (await fetch('/store/deps.json')).json()
+    
+    for (let dep of list) {
+        const deps = JSON.parse(fs.read('/deps/deps.json'))
+    
+        if (!deps[dep]) {
+            const code = await (await fetch(`/store/deps/${dep}.js`)).text()
+            deps[dep] = { usage: 0, version: vers[dep] }
+            fs.write(`/deps/${dep}.js`, code)
+            increase = true
+        } else if(deps[dep].version != vers[vers]) {
+            const code = await (await fetch(`/store/deps/${dep}.js`)).text()
+            deps[dep].version = vers[dep]
+            fs.write(`/deps/${dep}.js`, code)
+        }
+    
+        if(increase) deps[dep].usage++
+        fs.write('/deps/deps.json', JSON.stringify(deps))
+    }
 }

@@ -9,7 +9,7 @@ if(!localStorage.getItem(FS_NAME)) localStorage.setItem(FS_NAME, JSON.stringify(
 const filesys = JSON.parse(localStorage.getItem(FS_NAME))
 
 class FileSystem {
-    exist(path) {
+    exists(path) {
         return this.#file(path) != null
     }
         
@@ -48,7 +48,7 @@ class FileSystem {
     }
     
     write(path, data) {
-        if(!this.exist(path)) this.#createFile(path)
+        if(!this.exists(path)) this.#createFile(path)
         
         this.#file(path).data = data
         this.#save()

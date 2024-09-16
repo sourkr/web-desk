@@ -40,21 +40,42 @@ async function runcl(cl) {
     const args = cl.split(' ')
     
     switch (args[0]) {
-        case 'sourc': {
-            const compiler = new Compiler()
-            const code = fs.read(args[2])
-            const output = compiler.compile(code, msg => out.append(msg))
-            fs.write(args[1], output)
+        case 'exec':{
+            const encoder = new TextEncoder()
+            const buffer = encoder.encode(fs.read(args[1]))
+            
+            const wasm = await WebAssembly.instantiate(buffer, {
+                env: {
+                    write(addr, len) {
+                        const mem = wasm.instance.exports.memory
+                        const bytes = new Uint8Array(mem.buffer, addr, len)
+                        const str = new TextDecoder().decode(bytes)
+                        
+                        out.append(str)
+                    }
+                }
+            })
+            
+            console.log(wasm.instance.exports.main())
             break
         }
-        
-        case 'exec':
-            await exec(args[1], msg => out.append(msg))
-            break
         
         case 'pwd':
             out.append('/')
             break
+            
+        case 'wasm':
+            try {
+                const wabt = await WabtModule()
+                const module = wabt.parseWat(args[2], fs.read(args[2]))
+                module.validate()
+                const { buffer } = module.toBinary({})
+                const decoder = new TextDecoder()
+                fs.write(args[1], decoder.decode(buffer))
+            } catch (e) {
+                out.append(e.message.replace('parseWat failed:\n', ''))
+            }
+            break;
         
         default:
             out.append(`bash: ${args[0]}: Command not found`)

@@ -76,6 +76,24 @@ async function runcl(cl) {
                 out.append(e.message.replace('parseWat failed:\n', ''))
             }
             break;
+            
+        case 'gcc':
+            try {
+                // compile to wat
+                const compiler = new Compiler()
+                const wat = compiler.compile(fs.read(args[2]), msg => out.append(msg))
+                
+                // compile to wasm
+                const wabt = await WabtModule()
+                const module = wabt.parseWat(args[2], wat)
+                module.validate()
+                const { buffer } = module.toBinary({})
+                const decoder = new TextDecoder()
+                fs.write(args[1], decoder.decode(buffer))
+            } catch (e) {
+                out.append(e.message.replace('parseWat failed:\n', ''))
+            }
+            break;
         
         default:
             out.append(`bash: ${args[0]}: Command not found`)

@@ -15,8 +15,11 @@ class BaseParser {
   }
   
   parse() {
-    while(this.#tokens.has())
-      this.body.push(this.spec(this.parseStmt))
+    while(this.#tokens.has()) {
+        if(this.is('eof')) break
+        this.body.push(this.spec(this.parseStmt))
+    }
+    
     this.body = this.body.filter(Boolean)
   }
   

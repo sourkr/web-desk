@@ -74,10 +74,11 @@ function edit(path) {
 
 function write(path) {
     fs.write(path, textarea.val())
+    opened = path
 }
 
 function save() {
-    if(opened) write(opened)
+    if(opened) we(opened)
     else saveAs()
 }
 

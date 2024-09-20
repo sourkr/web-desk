@@ -80,16 +80,11 @@ class Parser extends BaseParser {
     return { type: 'var', name, valType }
   }
   
-  parseFun() {
-    this.skip('key', 'fun')
-    
-    const name = this.next('ident')
+  parseFun(type, name) {
     const params = this.spec(this.parseList, '(', ')', this.parseParam, ',')
-    this.skip('punc', ':')
-    const ret = this.spec(this.parseType)
     const body = this.spec(this.parseList, '{', '}', this.parseBlockStmt)
     
-    return { type: 'fun', name, params, ret, body }
+    return { type: 'fun', name, params, ret: type, body }
   }
   
   parseClass() {
@@ -138,6 +133,8 @@ class Parser extends BaseParser {
   parseIdent() {
     const ident = this.next('ident')
     
+    if (this.is('ident')) return this.spec(this.parseIdentIdent, ident)
+    
     if (this.is('punc', '(')) return this.spec(this.parseCall, ident)
     if (this.is('punc', '=')) return this.spec(this.parseAssign, ident)
     if (this.is('punc', '[')) return this.spec(this.parseIndex, ident)
@@ -150,6 +147,12 @@ class Parser extends BaseParser {
     // }
     
     return this.mayOp(ident)
+  }
+  
+  parseIdentIdent(type) {
+      const name = this.next('ident')
+      
+      if(this.is('punc', '(')) return this.parseFun(type, name)
   }
   
   parseCall(access) {

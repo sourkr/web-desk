@@ -1,9 +1,7 @@
 // 3 to 5
 class Compiler {
-    funs = new Map([
-        [ 'print', { params: [ 'str' ], compile: stmt => `a(1,${stmt.args[0].source})`, ret: 'void'} ],
-        [ 'guiCall', { params: [ 'num' ], compile: stmt => `await b(${stmt.args[0].source})`, ret: 'num'} ],
-    ])
+    funs = CPP_BUILTIN_FUNS
+    strPool = new StringPool()
     
     compile(code, out) {
         const parser = new Parser(code)
@@ -19,13 +17,21 @@ class Compiler {
         }
         
         const body = this.compBody(parser.body)
-        body.push('a(0,-1)')
+        const data = this.strPool.toString('    ')
         
-        return `(async()=>{${body.join(';')}})()`
+        return `(module
+    (import "env" "write" (func $write (param i32 i32)))
+    
+    (memory (export "memory") 1)
+    
+    ${data}
+    
+    ${body.join('\n    ')}
+)`
     }
     
     compBody(body) {
-        return body.map(this.compStmt.bind(this))
+        return body.map(this.compStmt.bind(this)).flat()
     }
     
     compStmt(stmt) {
@@ -50,8 +56,7 @@ class Compiler {
                     this.err(`(6) ${stmt.args[i].type} cannot be assigned to ${fun.params[i]}`, stmt.args[i])
             }
             
-            console.log(fun)
-            return fun.compile(stmt)
+            return fun.compile(stmt, this)
         }
         
         if(stmt.type == 'fun') {
@@ -62,7 +67,13 @@ class Compiler {
                 compile: this.compFun
             })
             
-            return `function ${name}() {${this.compBody(stmt.body).join(';')}}`
+            if(name == 'main') {
+                return `(func (export "main")
+        ${this.compBody(stmt.body).join('\n        ')}
+    )`
+            }
+            
+            return `(func ${name}() {${this.compBody(stmt.body).join(';')}}`
         }
         
         console.warn(stmt)
@@ -90,9 +101,36 @@ function formatError(code, err) {
     return `${e}\n ${lineno} | ${line}\n${pointer}\n`
 }
 
-const code = 
-`var win: num
-win = guiCall(1)`
+class StringPool {
+    pool = new Map()
+    pos = 0
+    
+    add(str) {
+        const index = this.pos
+        
+        this.pool.set(str, index)
+        this.pos += str
+        
+        return index
+    }
+    
+    toString(tab) {
+        return [...this.pool]
+            .map(([str, ptr]) => `(data (i32.const ${ptr}) ${raw(str)})`)
+            .join('\n' + tab)
+    }
+}
+
+const code = `
+void main() {
+    print("Hello, World!\n")
+}
+`
 
 const compiler = new Compiler()
 console.log(compiler.compile(code, msg => console.error(msg)))
+
+function raw(str) {
+    str = str.replaceAll('\n', '\\n')
+    return `"${str}"`
+}

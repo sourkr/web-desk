@@ -42,7 +42,10 @@ root.on('contextmenu', ev => {
         name.on('change', () => {
             fs.write(Path.join(stack.at(-1), name.val()))
             win.close()
+            update(stack.pop())
         })
+        
+        name.focus()
     })
     
     group.add(new FontIcon('create_new_folder'), 'Create New Folder', () => {
@@ -136,9 +139,14 @@ function listFile(list, path) {
         
         item.on('contextmenu', ev => {
             const menu = new ContextMenu()
+            const group = menu.group()
             
-            menu.group().add(new FontIcon('file_open'), 'Open With File Editor', () => {
+            if(fs.exists('/File Editor.js')) group.add(new FontIcon('file_open'), 'Open With File Editor', () => {
                 run('/File Editor.js', Path.join(path, filename))
+            })
+            
+            group.add(new FontIcon('delete'), 'Delete File', () => {
+                fs.delete(Path.join(path, filename))
             })
             
             menu.showAt(ev.pageX, ev.pageY)
